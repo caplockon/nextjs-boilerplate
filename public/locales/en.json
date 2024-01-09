@@ -1,0 +1,18 @@
+{
+    "IndexPage": {
+        "meta_title": "NextJS - Boilerplate",
+        "meta_description": "NextJS - Boilerplate Application",
+        "name": "Name is {name}"
+    },
+    "Welcome": {
+        "message": "Say hi"
+    },
+    "LenderIndex": {
+        "meta_title": "Lenders",
+        "meta_description": "List of lender clients"
+    },
+    "LenderEdit": {
+        "meta_title": "Edit Lender - {name}",
+        "meta_description": "Edit information of lender {uid} - {name}"
+    }
+}
