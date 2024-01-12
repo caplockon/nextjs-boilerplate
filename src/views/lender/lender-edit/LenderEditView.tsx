@@ -184,12 +184,12 @@ const LenderEditView = memo((props: LenderEditViewProps) => {
             </div>
           }
           name="lender_address"
-          defaultAddressValue={form.values.address ?? undefined}
+          defaultAddressValue={form.values.address !== null ? form.values.address : undefined}
           onChangeAddress={(e, address) => {
             form.values.address = address
           }} // Update changed value into form
           disabled={form.isSubmitting} // While form is submitting, this field will be disabled
-          errors={formError<KeysOf<Address>>('address')}
+          errors={formError<KeysOf<Address> | string>('address')}
         />
 
         <div>

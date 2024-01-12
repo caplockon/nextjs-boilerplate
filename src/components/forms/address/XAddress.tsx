@@ -9,7 +9,7 @@ export type XAddressProps = InputHTMLAttributes<HTMLInputElement> & {
   wrapperClass?: string
   onChangeAddress?: (e: ChangeEvent<HTMLInputElement>, values: any) => void
   defaultAddressValue?: Address
-  errors?: KeysOf<Address>
+  errors?: KeysOf<Address> | string
   placeholders?: KeysOf<Address>
 }
 
@@ -63,7 +63,7 @@ export const XAddress = (props: XAddressProps) => {
               onChangeAddress?.(e, addressForm)
             }}
             {...allProps}
-            error={errors?.street_1 ?? errors}
+            error={typeof errors === "object" ? errors?.street_1 : errors}
             wrapperClass=""
             placeholder={placeholders?.street_1}
           />
@@ -78,7 +78,7 @@ export const XAddress = (props: XAddressProps) => {
               addressForm.city = e.target.value
               onChangeAddress?.(e, addressForm)
             }}
-            error={errors?.city}
+            error={typeof errors === "object" ? errors?.city : undefined}
             {...allProps}
             placeholder={placeholders?.city}
           />
@@ -94,7 +94,7 @@ export const XAddress = (props: XAddressProps) => {
               onChangeAddress?.(e, addressForm)
             }}
             {...allProps}
-            error={errors?.state}
+            error={typeof errors === "object" ? errors?.state : undefined}
             placeholder={placeholders?.state}
           />
         </div>
@@ -108,7 +108,7 @@ export const XAddress = (props: XAddressProps) => {
               addressForm.zipcode = e.target.value
               onChangeAddress?.(e, addressForm)
             }}
-            error={errors?.zipcode}
+            error={typeof errors === "object" ? errors?.zipcode : undefined}
             {...allProps}
             placeholder={placeholders?.zipcode}
           />
