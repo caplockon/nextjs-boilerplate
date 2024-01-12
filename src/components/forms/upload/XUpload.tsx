@@ -9,6 +9,7 @@ export type XUploadProps = {
   wrapperClass?: string
   defaultPreviewFiles?: XUploadPreviewFileProps[]
   isLoading?: boolean
+  error?: string
 } & InputHTMLAttributes<HTMLInputElement>
 
 export type XUploadPreviewFileSrcType = string | File
@@ -50,6 +51,7 @@ export const XUpload = (props: XUploadProps) => {
     wrapperClass = 'mb-4',
     multiple = false,
     isLoading = false,
+    error,
     ...others
   } = props
 
@@ -111,6 +113,10 @@ export const XUpload = (props: XUploadProps) => {
           className="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
         />
       </XUploadPreview>
+
+      {error && (
+          <div className="ml-1 mt-1 text-xs font-light text-danger">{error}</div>
+      )}
     </div>
   )
 }

@@ -28,23 +28,18 @@ type LenderEditViewProps = {
 }
 
 /**
- * Define validation rules for lender address field
- */
-const lenderAddressSchema = defineSchema<Address>((rule) => ({
-  city: rule.string().required('City is required field'),
-  street_1: rule.string().required('Address Street is required field'),
-  state: rule.string().required('State is required field'),
-  zipcode: rule.string().required('Zipcode is required field'),
-}))
-
-/**
  * Define validation rules for lender form
  */
 const lenderSchema = defineSchema<Lender>((rule) => ({
   name: rule.string().required().min(5),
   is_active: rule.boolean().required(),
-  logo: rule.string(),
-  address: lenderAddressSchema,
+  logo: rule.string().nullable(),
+  address: rule.object().required().shape({
+    city: rule.string().required('City is required field'),
+    street_1: rule.string().required('Address Street is required field'),
+    state: rule.string().required('State is required field'),
+    zipcode: rule.string().required('Zipcode is required field'),
+  }),
 }))
 
 const LenderEditView = memo((props: LenderEditViewProps) => {
@@ -167,6 +162,7 @@ const LenderEditView = memo((props: LenderEditViewProps) => {
           )}
           isLoading={isUploadLogo}
           onChange={onLogoChanged}
+          error={formError('logo')}
           disabled={form.isSubmitting} // While form is submitting, this field will be disabled
         />
 
@@ -188,7 +184,7 @@ const LenderEditView = memo((props: LenderEditViewProps) => {
             </div>
           }
           name="lender_address"
-          defaultAddressValue={form.values.address}
+          defaultAddressValue={form.values.address ?? undefined}
           onChangeAddress={(e, address) => {
             form.values.address = address
           }} // Update changed value into form

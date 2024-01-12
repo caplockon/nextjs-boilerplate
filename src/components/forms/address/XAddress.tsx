@@ -16,7 +16,12 @@ export type XAddressProps = InputHTMLAttributes<HTMLInputElement> & {
 export const XAddress = (props: XAddressProps) => {
   const {
     label = null,
-    defaultAddressValue = {},
+    defaultAddressValue = {
+      city: '',
+      state: '',
+      zipcode: '',
+      street_1: '',
+    },
     wrapperClass = 'mb-4',
     onChangeAddress,
     disabled,
@@ -58,7 +63,7 @@ export const XAddress = (props: XAddressProps) => {
               onChangeAddress?.(e, addressForm)
             }}
             {...allProps}
-            error={errors?.street_1}
+            error={errors?.street_1 ?? errors}
             wrapperClass=""
             placeholder={placeholders?.street_1}
           />

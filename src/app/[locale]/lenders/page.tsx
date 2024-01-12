@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import type { PageMetadata, PropsWithLocaleParam } from '@/entities/common'
 import { LenderListView } from '@/views/lender'
+import {XPageHeader} from "@/components/data-display";
 
 export async function generateMetadata(
   props: PropsWithLocaleParam
@@ -20,7 +21,7 @@ export async function generateMetadata(
 export default function IndexPage() {
   return (
     <div>
-      <h1>Lender Client</h1>
+      <XPageHeader>Lender Clients</XPageHeader>
       <LenderListView />
     </div>
   )
