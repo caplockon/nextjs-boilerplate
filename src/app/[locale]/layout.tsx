@@ -1,5 +1,6 @@
-import './globals.css'
+import '@/styles/globals.scss'
 
+import clsx from 'clsx'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
@@ -37,8 +38,16 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css"
+        />
+        <script
+          src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"
+          async
+        />
       </head>
-      <body className={inter.className} id="app">
+      <body className={clsx(inter.className, 'p-5')} id="app">
         <ThemeRegistry>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}

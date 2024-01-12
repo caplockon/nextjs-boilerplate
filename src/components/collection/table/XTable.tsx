@@ -1,18 +1,21 @@
 import clsx from 'clsx'
+import { get as getValue } from 'lodash'
 import React, { forwardRef } from 'react'
 
-export type XTableRecordType<T> = T & React.Key
-
 export type XTableColumn<T> = {
-  name?: string
+  name: string
   label?: string
   render?: (record: T) => any
+  cellClass?: string
+  theadClass?: string
 }
 
 export type XTableProps<T = any> = {
   className?: string
   columns?: XTableColumn<T>[]
   dataSource?: T[]
+  recordKey?: (record: T) => string | number
+  border?: boolean
 }
 
 function render<T>(record: T, column: XTableColumn<T>) {
@@ -20,44 +23,63 @@ function render<T>(record: T, column: XTableColumn<T>) {
     return column.render(record)
   }
 
-  return ''
+  return getValue(record, column.name)
 }
 
 export const XTable = forwardRef<HTMLTableElement, XTableProps>(
   (props, ref) => {
-    const { className, columns = [], dataSource = [], ...others } = props
+    const {
+      className,
+      columns = [],
+      dataSource = [],
+      recordKey = (record) => getValue(record, 'key'),
+      border = false,
+      ...others
+    } = props
+
     return (
       <div className="relative overflow-x-auto">
         <table
           className={clsx(
             className,
-            'w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400'
+            'w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400',
+            { 'table-bordered': border }
           )}
           {...others}
           ref={ref}
         >
           <thead>
-            {columns.map((column) => (
-              <th key={column.name} scope="col" className="px-6 py-3">
-                {column.label}
-              </th>
-            ))}
+            <tr>
+              {columns.map((column) => (
+                <th
+                  key={column.name}
+                  scope="col"
+                  className={clsx('px-6 py-2', column.theadClass)}
+                >
+                  {column.label}
+                </th>
+              ))}
+            </tr>
           </thead>
 
-          <tbody>
-            {dataSource.length > 0 &&
-              dataSource.map((record) => {
+          {dataSource.length > 0 && (
+            <tbody>
+              {dataSource?.map((record) => {
                 return (
-                  <tr key={record.key}>
+                  <tr key={recordKey(record)}>
                     {columns.map((column) => (
-                      <td key={`${record.key}_${column.name}`}>
+                      <td
+                        key={`${record.key}_${column.name}`}
+                        className={clsx(column.cellClass, 'px-6 py-2')}
+                      >
                         {render(record, column)}
                       </td>
                     ))}
                   </tr>
                 )
               })}
-          </tbody>
+            </tbody>
+          )}
         </table>
       </div>
     )

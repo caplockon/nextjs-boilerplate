@@ -1,8 +1,7 @@
 'use client'
 
+import clsx from 'clsx'
 import { useState } from 'react'
-
-import { XButton } from '@/components/general/button/XButton'
 
 export type XPaginationProps = {
   total?: number
@@ -32,40 +31,46 @@ export const XPagination = (props: XPaginationProps) => {
 
   return (
     <nav aria-label="pagination navigation">
-      <ul className="flex list-none gap-1">
+      <ul className="inline-flex -space-x-px text-sm">
         <li>
-          <XButton
+          <button
             type="button"
-            variant="outlined"
-            color="light"
-            disabled={current === 1}
             onClick={() => pageClickHandler(current - 1)}
+            className="ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             Prev
-          </XButton>
+          </button>
         </li>
         {pages.map((page) => (
           <li key={`page_${page.number}`} className="non">
-            <XButton
+            <button
               type="button"
+              className={clsx(
+                'flex h-8 items-center justify-center border border-gray-300 px-3 leading-tight dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
+                {
+                  'hover:bg-gray-100 hover:text-gray-700 text-gray-500 bg-white':
+                    current !== page.number,
+                  'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700':
+                    current === page.number,
+                }
+              )}
               color={current === page.number ? 'primary' : 'light'}
-              variant={current === page.number ? 'solid' : 'outlined'}
               onClick={() => pageClickHandler(page.number)}
             >
               {page.number}
-            </XButton>
+            </button>
           </li>
         ))}
         <li>
-          <XButton
+          <button
             type="button"
             disabled={current === count}
-            variant="outlined"
+            className="flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
             color="light"
             onClick={() => pageClickHandler(current + 1)}
           >
             Next
-          </XButton>
+          </button>
         </li>
       </ul>
     </nav>

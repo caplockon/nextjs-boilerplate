@@ -1,20 +1,12 @@
-import type { FormInstance, FormProps } from 'antd'
-import { Form } from 'antd'
-import type { ReactNode } from 'react'
+import { Formik, useFormik } from 'formik'
+import { get } from 'lodash'
 
-type XFormProps = FormProps & {
-  children: ReactNode
+export const useFormError = (form: any) => {
+  return <T = string | number | any,>(field: string): T => {
+    return get(form, `errors.${field}`) && get(form, `touched.${field}`)
+      ? get(form, `errors.${field}`)
+      : undefined
+  }
 }
 
-type XFormInstance<T> = FormInstance<T> & {}
-
-export const XForm = ({ ...props }: XFormProps) => {
-  const { children } = props
-  return <Form {...props}>{children}</Form>
-}
-
-export const useForm = <T = any,>(
-  form?: XFormInstance<T>
-): [FormInstance<T>] => {
-  return Form.useForm(form)
-}
+export { useFormik as useForm, Formik as XForm }

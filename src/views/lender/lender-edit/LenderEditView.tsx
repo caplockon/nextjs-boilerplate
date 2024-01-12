@@ -1,80 +1,214 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import { memo, useState } from 'react'
 
+import { XPageHeader } from '@/components/data-display'
 import {
   useForm,
-  XForm,
-  XFormItem,
+  useFormError,
   XInput,
   XToggle,
   XUpload,
 } from '@/components/forms'
 import { XAddress } from '@/components/forms/address/XAddress'
 import { XButton } from '@/components/general/button/XButton'
+import { XLink } from '@/components/general/link/XLink'
+import { IconCircleCheck, IconWarning } from '@/components/icons'
+import type { Address, KeysOf } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
+import { useLenderAPI, useUploadAPI } from '@/services/lender'
+import { defineSchema } from '@/utils/misc'
 
+/**
+ * Define properties for the view
+ */
 type LenderEditViewProps = {
   lender: Lender & {}
 }
 
-export default function LenderEditView(props: LenderEditViewProps) {
-  const { lender } = props
-  const [lenderLogo, setLenderLogo] = useState(lender.logo)
+/**
+ * Define validation rules for lender address field
+ */
+const lenderAddressSchema = defineSchema<Address>((rule) => ({
+  city: rule.string().required('City is required field'),
+  street_1: rule.string().required('Address Street is required field'),
+  state: rule.string().required('State is required field'),
+  zipcode: rule.string().required('Zipcode is required field'),
+}))
 
-  const [lenderForm] = useForm()
-  useEffect(() => lender && lenderForm.setFieldsValue(lender), [])
-  const onFinishHandler = (values: Lender) => console.log(values)
-  const setLogoPath = (path: string) => {
-    setLenderLogo(path)
-    lenderForm.setFieldValue('logo', path)
+/**
+ * Define validation rules for lender form
+ */
+const lenderSchema = defineSchema<Lender>((rule) => ({
+  name: rule.string().required().min(5),
+  is_active: rule.boolean().required(),
+  logo: rule.string(),
+  address: lenderAddressSchema,
+}))
+
+const LenderEditView = memo((props: LenderEditViewProps) => {
+  const { lender } = props
+
+  /**
+   * Initialize APIs to upload file
+   */
+  const uploadAPI = useUploadAPI()
+
+  /**
+   * Initialize APIs to interact with lender object
+   */
+  const lenderAPI = useLenderAPI()
+
+  /**
+   * State to know the lender logo is uploading
+   */
+  const [isUploadLogo, setIsUploadLogo] = useState(false)
+
+  /**
+   * Create new form instance for the given lender object
+   */
+  const form = useForm<Lender>({
+    /**
+     * Set initial value for the form
+     */
+    initialValues: lender,
+
+    /**
+     * Set validation schema to validate data when the end-user clicks the Submit button
+     */
+    validationSchema: lenderSchema,
+
+    /**
+     * Handle submit - Calling to server to update lender
+     * This will be trigger after all fields of form are validated
+     * @param values
+     */
+    onSubmit: async (values) => {
+      await lenderAPI.update(lender.uid ?? '', values)
+    },
+  })
+
+  /**
+   * Variable to manage errors of the form
+   */
+  const formError = useFormError(form)
+
+  /**
+   * Handle to upload lender logo when the end-user changes it
+   * @param e
+   */
+  const onLogoChanged = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.item(0)
+
+    if (file) {
+      // Upload file to server
+      setIsUploadLogo(true)
+      const uploadedFileResponse = await uploadAPI.uploadFile(file)
+      setIsUploadLogo(false)
+
+      // Update log path to the form
+      if (uploadedFileResponse.path) {
+        form.values.logo = uploadedFileResponse.path
+      }
+    } else {
+      // If the logo is not set, then fallback to the original logo
+      form.values.logo = lender.logo
+    }
   }
 
+  /**
+   * Render the form
+   */
   return (
     <>
-      <h1>Edit Lender - {lender.name}</h1>
+      <XPageHeader>Edit Lender - {lender.name}</XPageHeader>
 
-      <XForm form={lenderForm} layout="vertical" onFinish={onFinishHandler}>
-        <XFormItem<Lender> name="uid" label="Lender Uid">
-          <XInput type="text" readOnly />
-        </XFormItem>
+      <form onSubmit={form.handleSubmit}>
+        <XInput
+          id="lender-uid"
+          type="text"
+          label="Uid"
+          readOnly
+          disabled
+          defaultValue={lender.uid}
+        />
 
-        <XFormItem<Lender> name="name" label="Lender Name">
-          <XInput type="text" />
-        </XFormItem>
+        <XInput
+          id="lender-name"
+          type="text"
+          label="Lender Name"
+          name="name"
+          onChange={form.handleChange} // Update changed value into form
+          defaultValue={form.values.name}
+          disabled={form.isSubmitting} // While form is submitting, this field will be disabled
+          error={formError('name')}
+        />
 
-        <XFormItem<Lender> label="Upload">
-          <XUpload
-            name="file"
-            listType="picture-card"
-            multiple={false}
-            showUploadList={false}
-            action="http://localhost:8081/upload-file"
-            onChange={(change) => {
-              console.log(change)
-              if (change.file.response) setLogoPath(change.file.response.path)
-            }}
-          >
-            {lenderLogo && (
-              <img src={lenderLogo} alt="dddd" className="w-full rounded" />
-            )}
-          </XUpload>
-        </XFormItem>
+        <XToggle
+          id="lender-is-active"
+          label="Is Active"
+          name="is_active"
+          checked={form.values.is_active}
+          onChange={form.handleChange} // Update changed value into form
+          disabled={form.isSubmitting} // While form is submitting, this field will be disabled
+        />
 
-        <XFormItem<Lender> name="is_active" label="Is Active">
-          <XToggle value />
-        </XFormItem>
+        <XUpload
+          id="lender-logo"
+          label="Lender Logo"
+          name="logo"
+          defaultPreviewFiles={(form.values.logo ? [form.values.logo] : []).map(
+            // Build preview logo
+            (src) => ({
+              src,
+              alt: 'preview',
+            })
+          )}
+          isLoading={isUploadLogo}
+          onChange={onLogoChanged}
+          disabled={form.isSubmitting} // While form is submitting, this field will be disabled
+        />
 
-        <XFormItem name="address" label="Company Address">
-          <XAddress />
-        </XFormItem>
+        <XAddress
+          id="lender-address"
+          label={
+            <div className="flex">
+              <span>Lender Address</span>
+              {form.values.address && ( // Display validation status of address
+                <XLink href="#" className="ml-2">
+                  {!form.values.address.is_validated && (
+                    <IconWarning className="text-danger" size={18} />
+                  )}
+                  {form.values.address.is_validated && (
+                    <IconCircleCheck className="text-success" size={18} />
+                  )}
+                </XLink>
+              )}
+            </div>
+          }
+          name="lender_address"
+          defaultAddressValue={form.values.address}
+          onChangeAddress={(e, address) => {
+            form.values.address = address
+          }} // Update changed value into form
+          disabled={form.isSubmitting} // While form is submitting, this field will be disabled
+          errors={formError<KeysOf<Address>>('address')}
+        />
 
         <div>
-          <XButton htmlType="submit" type="primary">
+          <XButton
+            type="submit"
+            color="primary"
+            isLoading={form.isSubmitting} // Show spinner while form is submitting
+            disabled={form.isSubmitting} // While form is submitting, this field will be disabled
+          >
             Submit
           </XButton>
         </div>
-      </XForm>
+      </form>
     </>
   )
-}
+})
+LenderEditView.displayName = 'LenderEditView'
+export default LenderEditView

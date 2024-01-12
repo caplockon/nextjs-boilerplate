@@ -16,12 +16,13 @@
   }
 }
 
-*, :after, :before {
-  border: 0 solid #e5e7eb;
-  box-sizing: border-box;
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-end-rgb));
+}
+
+.table-bordered {
+  tr td {
+    @apply border-b
+  }
 }

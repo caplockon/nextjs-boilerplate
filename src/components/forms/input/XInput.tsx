@@ -1,38 +1,45 @@
-import type { InputProps, InputRef } from 'antd'
-import { Input } from 'antd'
-import type { Ref } from 'react'
-import React, { forwardRef } from 'react'
+import clsx from 'clsx'
+import type { InputHTMLAttributes } from 'react'
 
-type XBaseInputProps = InputProps &
-  React.RefAttributes<InputRef> & {
-    type?:
-      | 'button'
-      | 'checkbox'
-      | 'color'
-      | 'date'
-      | 'datetime-local'
-      | 'email'
-      | 'file'
-      | 'hidden'
-      | 'image'
-      | 'month'
-      | 'number'
-      | 'password'
-      | 'radio'
-      | 'range'
-      | 'reset'
-      | 'search'
-      | 'submit'
-      | 'tel'
-      | 'text'
-      | 'time'
-      | 'url'
-      | 'week'
-  }
+type XBaseInputProps = {
+  label?: string
+  type?: string
+  wrapperClass?: string
+  error?: string
+} & InputHTMLAttributes<HTMLInputElement>
 
-export const XInput = forwardRef(
-  ({ ...props }: XBaseInputProps, ref: Ref<InputRef>) => {
-    return <Input ref={ref} {...props} />
-  }
-)
-XInput.displayName = 'XInput'
+export const XInput = (props: XBaseInputProps) => {
+  const {
+    label = null,
+    wrapperClass = 'mb-4',
+    type = 'text',
+    className,
+    error,
+    ...others
+  } = props
+
+  return (
+    <div className={wrapperClass}>
+      {label && (
+        <label
+          htmlFor={others.id}
+          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+        >
+          {label}
+        </label>
+      )}
+
+      <input
+        {...others}
+        type={type}
+        className={clsx(
+          'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+          className
+        )}
+      />
+      {error && (
+        <div className="ml-1 mt-1 text-xs font-light text-danger">{error}</div>
+      )}
+    </div>
+  )
+}
