@@ -1,6 +1,5 @@
-import { useTheme } from '@mui/joy'
+import type { PropsWithChildren } from 'react'
 
-export function useIsDarkMode() {
-  const theme = useTheme()
-  return theme.palette.mode === 'dark'
+export const ThemeRegistry = (props: PropsWithChildren) => {
+  return props.children
 }

@@ -6,7 +6,8 @@ import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, useMessages } from 'next-intl'
 
-import { AppConfig, ThemeRegistry } from '@/config/app'
+import { AppConfig } from '@/config/app'
+import { ThemeRegistry } from '@/config/theme'
 
 const inter = Inter({ subsets: ['latin'] })
 

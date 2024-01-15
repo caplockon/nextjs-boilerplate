@@ -6,10 +6,6 @@ export type PropsWithLocaleParam = {
   }
 }
 
-export type PropsWithReactNode = {
-  children: React.ReactNode
-}
-
 export type PageMetadata = {
   title?: string
   description?: string

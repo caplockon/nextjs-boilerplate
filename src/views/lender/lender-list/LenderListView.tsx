@@ -1,15 +1,16 @@
 'use client'
 
+import dayjs from 'dayjs'
 import React, { useEffect, useState } from 'react'
 
 import type { XTableColumn } from '@/components/collection'
 import { XPagination, XTable } from '@/components/collection'
-import { XAvatar, XTag } from '@/components/data-display';
+import { XAvatar, XTag } from '@/components/data-display'
+import { XCard } from '@/components/data-display/card/XCard'
 import type { PaginatorMeta } from '@/entities/laravel-conventions'
 import type { Lender } from '@/entities/lender'
 import { useLenderAPI } from '@/services/lender'
-import dayjs from 'dayjs';
-import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions';
+import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions'
 
 type LenderRow = Lender & {}
 
@@ -30,12 +31,14 @@ const columns: XTableColumn<LenderRow>[] = [
   },
   {
     name: 'name',
-    label: 'name',
+    label: 'Name',
   },
   {
     name: 'is_active',
     label: 'Is Active',
-    render: (lender) => lender.is_active ? 'Yes' : 'No',
+    render: (lender) => (lender.is_active ? 'Yes' : 'No'),
+    cellClass: 'text-center',
+    theadClass: 'text-center',
   },
   {
     name: 'created_at',
@@ -69,7 +72,7 @@ export function LenderListView() {
   }, [])
 
   return (
-    <>
+    <XCard className="py-4">
       <XTable
         columns={columns}
         dataSource={dataSource}
@@ -87,6 +90,6 @@ export function LenderListView() {
           />
         </div>
       )}
-    </>
+    </XCard>
   )
 }

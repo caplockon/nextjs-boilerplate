@@ -17,7 +17,7 @@ export const XLink = (props: XLinkProps) => {
           className="tooltip absolute bottom-full z-10 inline-block text-nowrap rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm transition-opacity duration-300 dark:bg-gray-700"
         >
           {tooltip}
-          <div className="tooltip-arrow" data-popper-arrow />
+          <div className="tooltip-arrow" data-popper-arrow="" />
         </div>
       )}
       {children}

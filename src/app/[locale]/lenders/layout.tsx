@@ -1,7 +1,7 @@
 'use client'
 
-import type { PropsWithReactNode } from '@/entities/common'
+import type { PropsWithChildren } from 'react'
 
-export default function DashboardLayout(props: PropsWithReactNode) {
+export default function DashboardLayout(props: PropsWithChildren) {
   return <div>{props.children}</div>
 }

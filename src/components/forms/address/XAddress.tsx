@@ -1,7 +1,8 @@
-import React, { ChangeEvent, InputHTMLAttributes } from 'react'
+import type { ChangeEvent, InputHTMLAttributes } from 'react'
+import React from 'react'
 
 import { XInput } from '@/components/forms'
-import type { Address, KeysOf } from '@/entities/common';
+import type { Address, KeysOf } from '@/entities/common'
 import { useContextState } from '@/utils/misc'
 
 export type XAddressProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -63,7 +64,7 @@ export const XAddress = (props: XAddressProps) => {
               onChangeAddress?.(e, addressForm)
             }}
             {...allProps}
-            error={typeof errors === "object" ? errors?.street_1 : errors}
+            error={typeof errors === 'object' ? errors?.street_1 : errors}
             wrapperClass=""
             placeholder={placeholders?.street_1}
           />
@@ -78,7 +79,7 @@ export const XAddress = (props: XAddressProps) => {
               addressForm.city = e.target.value
               onChangeAddress?.(e, addressForm)
             }}
-            error={typeof errors === "object" ? errors?.city : undefined}
+            error={typeof errors === 'object' ? errors?.city : undefined}
             {...allProps}
             placeholder={placeholders?.city}
           />
@@ -94,7 +95,7 @@ export const XAddress = (props: XAddressProps) => {
               onChangeAddress?.(e, addressForm)
             }}
             {...allProps}
-            error={typeof errors === "object" ? errors?.state : undefined}
+            error={typeof errors === 'object' ? errors?.state : undefined}
             placeholder={placeholders?.state}
           />
         </div>
@@ -108,7 +109,7 @@ export const XAddress = (props: XAddressProps) => {
               addressForm.zipcode = e.target.value
               onChangeAddress?.(e, addressForm)
             }}
-            error={typeof errors === "object" ? errors?.zipcode : undefined}
+            error={typeof errors === 'object' ? errors?.zipcode : undefined}
             {...allProps}
             placeholder={placeholders?.zipcode}
           />

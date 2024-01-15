@@ -115,7 +115,7 @@ export const XUpload = (props: XUploadProps) => {
       </XUploadPreview>
 
       {error && (
-          <div className="ml-1 mt-1 text-xs font-light text-danger">{error}</div>
+        <div className="ml-1 mt-1 text-xs font-light text-danger">{error}</div>
       )}
     </div>
   )

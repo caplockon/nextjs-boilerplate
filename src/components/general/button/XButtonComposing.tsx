@@ -84,5 +84,9 @@ export const composeButtonClass = (props: XButtonComposingProps) => {
   const variantClass = XButtonVariants.get(variant)?.get(color)
   const sizeClass = XButtonSizes.get(size)
 
-  return { variantClass, sizeClass, defaultClass: 'focus:outline-none cursor-pointer' }
+  return {
+    variantClass,
+    sizeClass,
+    defaultClass: 'focus:outline-none cursor-pointer',
+  }
 }
