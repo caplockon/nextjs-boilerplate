@@ -7,7 +7,7 @@ import { IconPlus, IconSpinner } from '@/components/icons'
 export type XUploadProps = {
   label?: string | React.ReactNode
   wrapperClass?: string
-  defaultPreviewFiles?: XUploadPreviewFileProps[]
+  defaultPreviewFiles?: XUploadPreviewFileProps[] | XUploadPreviewFileProps
   isLoading?: boolean
   error?: string
 } & InputHTMLAttributes<HTMLInputElement>
@@ -55,10 +55,15 @@ export const XUpload = (props: XUploadProps) => {
     ...others
   } = props
 
+  let previewFiles = []
+  if (Array.isArray(defaultPreviewFiles)) {
+    previewFiles = defaultPreviewFiles
+  } else if (defaultPreviewFiles) {
+    previewFiles.push(defaultPreviewFiles)
+  }
+
   const singlePreviewFile =
-    defaultPreviewFiles && defaultPreviewFiles.length > 0
-      ? defaultPreviewFiles[0]
-      : undefined
+    defaultPreviewFiles && previewFiles.length > 0 ? previewFiles[0] : undefined
   const isSinglePreview = !multiple && singlePreviewFile
 
   return (
@@ -72,7 +77,7 @@ export const XUpload = (props: XUploadProps) => {
 
       {multiple && defaultPreviewFiles && (
         <div>
-          {defaultPreviewFiles.map((file) => (
+          {previewFiles.map((file) => (
             <XUploadPreviewFile key={getFileSourceKey(file.src)} {...file} />
           ))}
         </div>

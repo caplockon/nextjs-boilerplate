@@ -8,6 +8,12 @@ import type {
 
 export const http = axios.create({
   baseURL: 'http://localhost:8081',
+  method: 'get',
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Allow-Credentials': 'true',
+  },
 })
 
 export const useRestApiResource = <T>(path: string) => {
@@ -29,7 +35,7 @@ export const useRestApiResource = <T>(path: string) => {
    * Create a resource
    * @param resource
    */
-  async function create(resource?: any) {
+  async function create(resource?: T | any) {
     const response = await http.post<ResourceResponse<T>>(path, resource)
     return response.data
   }

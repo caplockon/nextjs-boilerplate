@@ -1,3 +1,5 @@
+import { useFormik } from 'formik'
+import { get } from 'lodash'
 import type { Dispatch, SetStateAction } from 'react'
 import { useState } from 'react'
 import type { ObjectShape } from 'yup'
@@ -21,3 +23,13 @@ export const defineSchema = <T>(
 ) => {
   return yup.object().shape(schema(yup))
 }
+
+export const useFormError = (form: any) => {
+  return <T = string | number | any>(field: string): T => {
+    return get(form, `errors.${field}`) && get(form, `touched.${field}`)
+      ? get(form, `errors.${field}`)
+      : undefined
+  }
+}
+
+export const useForm = useFormik

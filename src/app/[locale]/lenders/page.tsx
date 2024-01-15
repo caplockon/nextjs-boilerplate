@@ -1,8 +1,10 @@
 import { getTranslations } from 'next-intl/server'
 
+import { IconHomeOutline } from '@/components/icons'
+import type { BreadcrumbItem } from '@/components/partials/page-header/Breadcrumb'
+import PageHeader from '@/components/partials/page-header/PageHeader'
 import type { PageMetadata, PropsWithLocaleParam } from '@/entities/common'
 import { LenderListView } from '@/views/lender'
-import {XPageHeader} from "@/components/data-display";
 
 export async function generateMetadata(
   props: PropsWithLocaleParam
@@ -19,9 +21,21 @@ export async function generateMetadata(
 }
 
 export default function IndexPage() {
+  const breadcrumb: BreadcrumbItem[] = [
+    {
+      label: 'Lender',
+      icon: <IconHomeOutline className="mr-2" size={16} />,
+    },
+  ]
   return (
     <div>
-      <XPageHeader>Lender Clients</XPageHeader>
+      <PageHeader
+        breadcrumb={breadcrumb}
+        rightHeader={<a href="/lenders/create">Create New Lender</a>}
+      >
+        Lender Clients
+      </PageHeader>
+
       <LenderListView />
     </div>
   )

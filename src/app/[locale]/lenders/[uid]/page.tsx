@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { Lender } from '@/entities/lender'
 import { useLenderAPI } from '@/services/lender'
@@ -12,7 +12,7 @@ type LenderEditPageProp = {
   }
 }
 
-const LenderEditPage = memo((props: LenderEditPageProp) => {
+const LenderEditPage = (props: LenderEditPageProp) => {
   const lenderAPI = useLenderAPI<Lender>()
   const [lender, setLender] = useState<Lender>()
 
@@ -20,7 +20,6 @@ const LenderEditPage = memo((props: LenderEditPageProp) => {
     lenderAPI.get(props.params.uid).then((res) => setLender(res.data))
   }, [])
   return <div>{lender && <LenderEditView lender={lender} />}</div>
-})
-LenderEditPage.displayName = 'LenderEditPage'
+}
 
 export default LenderEditPage

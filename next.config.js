@@ -8,7 +8,7 @@ const withNextIntl = require('next-intl/plugin')(i18nConfigFile)
 const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, '/src/styles')],
-  },
+  }
 }
 
 module.exports = withNextIntl(nextConfig)

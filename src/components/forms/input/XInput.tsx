@@ -1,5 +1,6 @@
 import clsx from 'clsx'
-import type { InputHTMLAttributes } from 'react'
+import type { InputHTMLAttributes, Ref } from 'react'
+import { forwardRef } from 'react'
 
 type XBaseInputProps = {
   label?: string
@@ -8,7 +9,7 @@ type XBaseInputProps = {
   error?: string
 } & InputHTMLAttributes<HTMLInputElement>
 
-export const XInput = (props: XBaseInputProps) => {
+export const XInput = forwardRef((props: XBaseInputProps, ref: Ref<any>) => {
   const {
     label = null,
     wrapperClass = 'mb-4',
@@ -30,6 +31,7 @@ export const XInput = (props: XBaseInputProps) => {
       )}
 
       <input
+        ref={ref}
         {...others}
         type={type}
         className={clsx(
@@ -42,4 +44,6 @@ export const XInput = (props: XBaseInputProps) => {
       )}
     </div>
   )
-}
+})
+
+XInput.displayName = 'XInput'

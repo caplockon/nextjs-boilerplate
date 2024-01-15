@@ -6,6 +6,8 @@ import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, useMessages } from 'next-intl'
 
+import Navbar from '@/components/partials/navbar/Navbar'
+import Sidebar from '@/components/partials/sidebar/Sidebar'
 import { AppConfig } from '@/config/app'
 import { ThemeRegistry } from '@/config/theme'
 
@@ -48,10 +50,14 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className={clsx(inter.className, 'p-5')} id="app">
+      <body className={inter.className} id="app">
         <ThemeRegistry>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
+            <Navbar />
+
+            <Sidebar />
+
+            <div className="mt-14 p-4 sm:ml-64">{children}</div>
           </NextIntlClientProvider>
         </ThemeRegistry>
       </body>
