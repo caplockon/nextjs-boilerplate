@@ -1,11 +1,17 @@
-import { NextRequest } from 'next/server'
-import { UserProfile } from '@/entities/common'
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
-export const isPublic = (req: NextRequest) => {
-  console.log(req.url)
-  return false
-}
+import type { UserProfile } from '@/entities/common'
 
-export const authorize = (req: NextRequest, user: UserProfile) => {
-  return true
+export const authorize = (
+  router: AppRouterInstance,
+  path: string,
+  user?: UserProfile | undefined
+): void => {
+  if (path.startsWith('/login')) {
+    return
+  }
+
+  if (!user) {
+    router.push('/login')
+  }
 }

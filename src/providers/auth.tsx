@@ -1,12 +1,11 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
-import type { NextFetchEvent, NextMiddleware, NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import { usePathname, useRouter } from 'next/navigation'
 import type { PropsWithChildren } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import type { AuthToken, UserProfile } from '@/entities/common'
+import { authorize } from '@/providers/route'
 import { useAuthentication } from '@/services/auth'
 
 export type AuthContextProps = {
@@ -40,15 +39,30 @@ export const useToken = () => {
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<UserProfile>()
   const pathname = usePathname()
+  const router = useRouter()
 
   const authAPI = useAuthentication()
   const { token } = useToken()
 
-  useEffect(() => {
-    if (token) {
-      authAPI.getProfile(token).then((res) => setUser(res))
+  const fetchUser = async () => {
+    const fetchedUser = token ? await authAPI.getProfile(token) : token
+    if (!fetchedUser) {
+      throw new Error('No user')
     }
-  }, [])
+
+    return fetchedUser
+  }
+
+  useEffect(() => {
+    fetchUser()
+      .then((res) => {
+        setUser(res)
+        authorize(router, pathname, res)
+      })
+      .catch(() => {
+        authorize(router, pathname, undefined)
+      })
+  }, [token])
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -58,45 +72,4 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
 export const useAuthContext = () => {
   return useContext(AuthContext)
-}
-
-export type AuthMiddlewareConfig = {
-  /**
-   * Handle before checking authorization
-   * @param req
-   */
-  before?: (req: NextRequest) => NextResponse | boolean
-  /**
-   * Check authentication
-   * @param req
-   * @param user
-   */
-  auth?: (
-    req: NextRequest,
-    user: UserProfile | undefined
-  ) => NextResponse | boolean
-}
-
-export const createAuthMiddleware = (config?: AuthMiddlewareConfig) => {
-  return (req: NextRequest, event: NextFetchEvent, next: NextMiddleware) => {
-    // Check if before authentication is set
-    const beforeResult = config?.before?.(req)
-    if (beforeResult instanceof NextResponse) return beforeResult
-
-    if (beforeResult) {
-      // This is public request, so that skip authorizing
-      return next(req, event)
-    }
-
-    // Check authentication
-    const { user } = useAuthContext()
-    const authResult = config?.auth?.(req, user)
-    if (authResult instanceof NextResponse) return authResult
-
-    if (!authResult) {
-      throw new Error('Unauthorized')
-    }
-
-    return next(req, event)
-  }
 }
