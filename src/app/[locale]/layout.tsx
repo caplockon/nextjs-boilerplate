@@ -1,15 +1,13 @@
 import '@/styles/globals.scss'
 
-import clsx from 'clsx'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
-import { NextIntlClientProvider, useMessages } from 'next-intl'
+import { useMessages } from 'next-intl'
 
-import Navbar from '@/components/partials/navbar/Navbar'
-import Sidebar from '@/components/partials/sidebar/Sidebar'
-import { AppConfig } from '@/config/app'
-import { ThemeRegistry } from '@/config/theme'
+import AppProviders from '@/providers/app'
+import { AppConfig } from '@/config'
+import React from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,7 +27,7 @@ export default function RootLayout({
   if (!AppConfig.locales.includes(locale)) notFound()
 
   // Using internationalization in Client Components
-  const messages = useMessages()
+  const i18nMessages = useMessages()
 
   return (
     <html lang={locale}>
@@ -51,15 +49,9 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className} id="app">
-        <ThemeRegistry>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <Navbar />
-
-            <Sidebar />
-
-            <div className="mt-14 p-4 sm:ml-64">{children}</div>
-          </NextIntlClientProvider>
-        </ThemeRegistry>
+        <AppProviders params={{ locale, i18nMessages }}>
+          {children}
+        </AppProviders>
       </body>
     </html>
   )

@@ -1,4 +1,5 @@
 import { XDropdown } from '@/components/navigation/dropdown/XDropdown'
+import { useAuthContext } from '@/providers/auth'
 
 const UserAvatarButton = ({ handleClick }: any) => {
   return (
@@ -18,17 +19,18 @@ const UserAvatarButton = ({ handleClick }: any) => {
 }
 
 export default function UserMenu() {
+  const { user } = useAuthContext()
   return (
     <XDropdown label={<UserAvatarButton />}>
       <div className="px-4 py-3" role="none">
         <p className="text-sm text-gray-900 dark:text-white" role="none">
-          Neil Sims
+          {user?.name}
         </p>
         <p
           className="truncate text-sm font-medium text-gray-900 dark:text-gray-300"
           role="none"
         >
-          neil.sims@flowbite.com
+          {user?.email}
         </p>
       </div>
       <ul className="py-1" role="none">

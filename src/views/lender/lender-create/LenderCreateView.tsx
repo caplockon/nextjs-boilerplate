@@ -44,9 +44,10 @@ const LenderCreateView = () => {
     /**
      * Handle when form is submitted
      */
-    onSubmit: async (values) => {
-      const resource = await lenderAPI.create(values)
-      await router.push(`/lenders/${resource.data.uid}`)
+    onSubmit: (values) => {
+      lenderAPI.create(values).then((resource) => {
+        router.push(`/lenders/${resource.data.uid}`)
+      })
     },
   })
 

@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server'
 
 import { IconHomeOutline } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/partials/page-header/Breadcrumb'
-import PageHeader from '@/components/partials/page-header/PageHeader'
+import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { PageMetadata, PropsWithLocaleParam } from '@/entities/common'
 import { LenderListView } from '@/views/lender'
 

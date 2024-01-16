@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 
-import { AppConfig } from '@/config/app'
+import { AppConfig } from '@/config'
 
 const intlMiddleware = createMiddleware({
   locales: AppConfig.locales,

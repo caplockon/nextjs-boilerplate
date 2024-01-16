@@ -11,8 +11,8 @@ import {
   IconHomeOutline,
   IconWarning,
 } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/partials/page-header/Breadcrumb'
-import PageHeader from '@/components/partials/page-header/PageHeader'
+import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { Address, KeysOf } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
 import { useLenderAPI } from '@/services/lender'

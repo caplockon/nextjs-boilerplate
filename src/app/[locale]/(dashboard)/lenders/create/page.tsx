@@ -1,6 +1,6 @@
 import { IconHomeOutline } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/partials/page-header/Breadcrumb'
-import PageHeader from '@/components/partials/page-header/PageHeader'
+import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import PageHeader from '@/components/layout/page-header/PageHeader'
 import LenderCreateView from '@/views/lender/lender-create/LenderCreateView'
 
 export default function LenderCreatePage() {

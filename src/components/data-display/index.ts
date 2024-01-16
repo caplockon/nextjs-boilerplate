@@ -1,3 +1,3 @@
 export * from './avatar/XAvatar'
-export * from './page-header/XPageHeader'
+export * from './heading2/XHeading2'
 export * from './tag/XTag'

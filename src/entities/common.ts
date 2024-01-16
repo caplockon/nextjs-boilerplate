@@ -1,5 +1,3 @@
-import type React from 'react'
-
 export type PropsWithLocaleParam = {
   params: {
     locale: string
@@ -36,4 +34,24 @@ export type KeysOf<Values> = {
     : Values[K] extends object
       ? KeysOf<Values[K]>
       : any
+}
+
+export type UserProfile = {
+  email?: string
+  name?: string
+  email_verified_at?: string
+  created_at?: string
+  updated_at?: string
+}
+
+export type UserCredentials = {
+  username?: string
+  password?: string
+}
+
+export type AuthToken = {
+  token_type?: string
+  expires_in?: number
+  access_token?: string
+  refresh_token?: string
 }

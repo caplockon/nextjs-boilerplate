@@ -3,8 +3,8 @@ import {
   IconLender,
   IconSettingsOutline,
 } from '@/components/icons'
-import SidebarMenu from '@/components/partials/sidebar/SidebarMenu'
-import SidebarMenuItem from '@/components/partials/sidebar/SidebarMenuItem'
+import SidebarMenu from '@/components/layout/sidebar/SidebarMenu'
+import SidebarMenuItem from '@/components/layout/sidebar/SidebarMenuItem'
 
 export default function Sidebar() {
   return (

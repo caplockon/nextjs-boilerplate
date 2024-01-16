@@ -1,7 +1,7 @@
 'use client'
 
-import AppLogo from '@/components/partials/navbar/AppLogo'
-import UserMenu from '@/components/partials/navbar/UserMenu'
+import AppLogo from '@/components/layout/navbar/AppLogo'
+import UserMenu from '@/components/layout/navbar/UserMenu'
 
 export default function Navbar() {
   return (
