@@ -34,7 +34,7 @@ export const useAuthentication = () => {
 
   async function getProfile(token: string) {
     const response = await http.get<ResourceResponse<UserProfile>>(
-      '/oauth/me',
+      '/api/oauth/me',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,5 +45,19 @@ export const useAuthentication = () => {
     return response.data.data
   }
 
-  return { createToken, getProfile }
+  async function destroyToken(token: string) {
+    const response = await http.post<ResourceResponse<any>>(
+      '/api/oauth/token/destroy',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    return response.data.data
+  }
+
+  return { createToken, getProfile, destroyToken }
 }

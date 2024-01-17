@@ -4,8 +4,9 @@ import type { PropsWithChildren } from 'react'
 
 import Navbar from '@/components/layout/navbar/Navbar'
 import Sidebar from '@/components/layout/sidebar/Sidebar'
+import { withAuthenticationRequired } from '@/providers/auth'
 
-export default function DashboardLayout({ children }: PropsWithChildren) {
+const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <Navbar />
@@ -16,3 +17,5 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
     </>
   )
 }
+
+export default withAuthenticationRequired(DashboardLayout)

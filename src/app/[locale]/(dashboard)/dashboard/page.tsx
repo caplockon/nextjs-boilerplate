@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import XWelcome from '@/components/home/welcome/XWelcome'
 import type { PropsWithLocaleParam } from '@/entities/common'
+import { withAuthenticationRequired } from '@/providers/auth'
 
 export async function generateMetadata(props: PropsWithLocaleParam) {
   const t = await getTranslations({
@@ -14,6 +15,8 @@ export async function generateMetadata(props: PropsWithLocaleParam) {
   }
 }
 
-export default function IndexPage() {
+const IndexPage = () => {
   return <XWelcome />
 }
+
+export default IndexPage

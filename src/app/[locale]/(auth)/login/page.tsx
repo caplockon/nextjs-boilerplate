@@ -6,7 +6,7 @@ import { XHeading2 } from '@/components/data-display/heading2/XHeading2'
 import { XInput } from '@/components/forms'
 import { XButton } from '@/components/general/button/XButton'
 import type { UserCredentials } from '@/entities/common'
-import { useToken } from '@/providers/auth'
+import { useAuthContext, useToken } from '@/providers/auth'
 import { useAuthentication } from '@/services/auth'
 import { defineSchema, useForm, useFormError } from '@/utils/misc'
 
@@ -21,6 +21,8 @@ const loginFormSchema = defineSchema<LoginForm>((rule) => ({
 }))
 
 export default function LoginPage() {
+  const { isAuthenticated, onRedirect } = useAuthContext()
+
   const authAPI = useAuthentication()
   const { setToken } = useToken()
   const router = useRouter()
@@ -57,6 +59,10 @@ export default function LoginPage() {
   })
 
   const formError = useFormError(form)
+
+  if (isAuthenticated) {
+    return onRedirect('/dashboard')
+  }
 
   return (
     <div className="mx-auto mt-12 max-w-sm">

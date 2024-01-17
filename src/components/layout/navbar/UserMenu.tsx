@@ -1,5 +1,7 @@
+import type { AnchorHTMLAttributes, PropsWithChildren } from 'react'
+
 import { XDropdown } from '@/components/navigation/dropdown/XDropdown'
-import { useAuthContext } from '@/providers/auth'
+import type { UserProfile } from '@/entities/common'
 
 const UserAvatarButton = ({ handleClick }: any) => {
   return (
@@ -18,8 +20,28 @@ const UserAvatarButton = ({ handleClick }: any) => {
   )
 }
 
-export default function UserMenu() {
-  const { user } = useAuthContext()
+export type UserMenuItemProps = AnchorHTMLAttributes<HTMLAnchorElement> &
+  PropsWithChildren & {}
+
+export function UserMenuItem({ children, ...others }: UserMenuItemProps) {
+  return (
+    <li>
+      <a
+        {...others}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+        role="menuitem"
+      >
+        {children}
+      </a>
+    </li>
+  )
+}
+
+export type UserMenuProps = PropsWithChildren & {
+  user: UserProfile
+}
+
+export function UserMenu({ children, user }: UserMenuProps) {
   return (
     <XDropdown label={<UserAvatarButton />}>
       <div className="px-4 py-3" role="none">
@@ -34,42 +56,7 @@ export default function UserMenu() {
         </p>
       </div>
       <ul className="py-1" role="none">
-        <li>
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-            role="menuitem"
-          >
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-            role="menuitem"
-          >
-            Settings
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-            role="menuitem"
-          >
-            Earnings
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-            role="menuitem"
-          >
-            Sign out
-          </a>
-        </li>
+        {children}
       </ul>
     </XDropdown>
   )

@@ -42,6 +42,8 @@ export type UserProfile = {
   email_verified_at?: string
   created_at?: string
   updated_at?: string
+  roles?: string[]
+  scopes?: string[]
 }
 
 export type UserCredentials = {

@@ -4,10 +4,10 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { useMessages } from 'next-intl'
-
-import AppProviders from '@/providers/app'
-import { AppConfig } from '@/config'
 import React from 'react'
+
+import { AppConfig } from '@/config'
+import AppProviders from '@/providers/app'
 
 const inter = Inter({ subsets: ['latin'] })
 

@@ -1,18 +1,34 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
-import type { PropsWithChildren } from 'react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import type { ComponentType, FC, JSX, PropsWithChildren } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import type { AuthToken, UserProfile } from '@/entities/common'
-import { authorize } from '@/providers/route'
 import { useAuthentication } from '@/services/auth'
 
 export type AuthContextProps = {
   user?: UserProfile
+  isAuthenticated?: boolean
+  isLoading?: Boolean
+  loginWithRedirect: (next: string) => void
+  logout?: () => void
+  onRedirect: (next: string) => JSX.Element
 }
 
-const AuthContext = createContext<AuthContextProps>({})
+const initialContext: AuthContextProps = {
+  loginWithRedirect: (next: string) => {
+    if (typeof window !== 'undefined')
+      window.location.href = `/login?next=${next}`
+  },
+
+  onRedirect: (next: string) => {
+    if (typeof window !== 'undefined') window.location.href = next
+
+    return <div />
+  },
+}
+
+const AuthContext = createContext<AuthContextProps>(initialContext)
 
 export const useToken = () => {
   const storage = typeof window !== 'undefined' ? sessionStorage : undefined
@@ -38,8 +54,8 @@ export const useToken = () => {
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<UserProfile>()
-  const pathname = usePathname()
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const authAPI = useAuthentication()
   const { token } = useToken()
@@ -47,29 +63,125 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const fetchUser = async () => {
     const fetchedUser = token ? await authAPI.getProfile(token) : token
     if (!fetchedUser) {
+      setIsLoading(false)
       throw new Error('No user')
     }
 
+    setIsLoading(false)
     return fetchedUser
+  }
+
+  const logout = () => {
+    if (token) {
+      authAPI.destroyToken(token)
+    }
   }
 
   useEffect(() => {
     fetchUser()
       .then((res) => {
         setUser(res)
-        authorize(router, pathname, res)
+        setIsAuthenticated(true)
       })
       .catch(() => {
-        authorize(router, pathname, undefined)
+        setIsAuthenticated(false)
       })
   }, [token])
 
-  return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
-  )
+  const context = useMemo(() => {
+    return {
+      user,
+      isLoading,
+      isAuthenticated,
+      loginWithRedirect: initialContext.loginWithRedirect,
+      onRedirect: initialContext.onRedirect,
+      logout,
+    }
+  }, [user, isLoading, isAuthenticated])
+
+  return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
 }
 
 export const useAuthContext = () => {
   return useContext(AuthContext)
+}
+
+export type AuthenticationOptions = {
+  /**
+   * Define the role can access the component
+   */
+  roles?: string[]
+
+  /**
+   * Define allowed scopes
+   */
+  scopes?: string[]
+
+  /**
+   * Handle when the user is not authenticated
+   */
+  unauthenticated?: () => JSX.Element
+}
+
+const defaultUnauthenticated = () => {
+  if (typeof window !== 'undefined') {
+    const next = `${window.location.pathname}${window.location.search}`
+    window.location.href = `/login?next=${next}`
+  }
+  return <div />
+}
+
+export const withAuthenticationRequired = <P extends object>(
+  Component: ComponentType<P>,
+  options: AuthenticationOptions = {}
+): FC<P> => {
+  return function WithAuthenticationRequired(props: P): JSX.Element {
+    const { unauthenticated = defaultUnauthenticated } = options
+    const { isAuthenticated, isLoading } = useAuthContext()
+
+    useEffect(() => {
+      if (isLoading || isAuthenticated) {
+        return
+      }
+      unauthenticated()
+    }, [isLoading, isAuthenticated])
+
+    return isAuthenticated ? <Component {...props} /> : unauthenticated()
+  }
+}
+
+export type WithAuthorizationOptions = {
+  /**
+   * Handle when the user is not authorized
+   */
+  unauthorized?: () => JSX.Element
+
+  /**
+   * Granted permission for some roles
+   */
+  forRoles?: string[]
+
+  /**
+   * Granted permission for some scopes
+   */
+  forScopes?: string[]
+}
+
+export const withAuthorization = <P extends object>(
+  Component: ComponentType<P>,
+  options: WithAuthorizationOptions = {}
+): FC<P> => {
+  return function WithAuthorization(props: P): JSX.Element {
+    const { unauthorized = () => <span>Action is not authorized</span> } =
+      options
+    const { isAuthenticated } = useAuthContext()
+
+    if (isAuthenticated) {
+      return unauthorized()
+    }
+
+    // Check role and scope here
+
+    return <Component {...props} />
+  }
 }
