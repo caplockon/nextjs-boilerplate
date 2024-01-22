@@ -3,7 +3,7 @@
 import type { ComponentType, FC, JSX, PropsWithChildren } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import type { AuthToken, UserProfile } from '@/entities/common'
+import type { AuthToken, UserCredentials, UserProfile } from '@/entities/common'
 import { useAuthentication } from '@/services/auth'
 
 export type AuthContextProps = {
@@ -63,11 +63,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const fetchUser = async () => {
     const fetchedUser = token ? await authAPI.getProfile(token) : token
     if (!fetchedUser) {
-      setIsLoading(false)
       throw new Error('No user')
     }
-
-    setIsLoading(false)
     return fetchedUser
   }
 
@@ -82,9 +79,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       .then((res) => {
         setUser(res)
         setIsAuthenticated(true)
+        setIsLoading(false)
       })
       .catch(() => {
         setIsAuthenticated(false)
+        setIsLoading(false)
       })
   }, [token])
 
@@ -139,14 +138,7 @@ export const withAuthenticationRequired = <P extends object>(
     const { unauthenticated = defaultUnauthenticated } = options
     const { isAuthenticated, isLoading } = useAuthContext()
 
-    useEffect(() => {
-      if (isLoading || isAuthenticated) {
-        return
-      }
-      unauthenticated()
-    }, [isLoading, isAuthenticated])
-
-    return isAuthenticated ? <Component {...props} /> : unauthenticated()
+    return isAuthenticated ? <Component {...props} /> : <div />
   }
 }
 

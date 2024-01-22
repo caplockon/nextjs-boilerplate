@@ -18,7 +18,7 @@ export default function Navbar() {
             <div className="flex items-center">
               <div className="lex ms-3 items-center">
                 <UserMenu user={user}>
-                  <UserMenuItem>Dashboard</UserMenuItem>
+                  <UserMenuItem>Dashboard </UserMenuItem>
                   <UserMenuItem onClick={logout}>Sign-Out</UserMenuItem>
                 </UserMenu>
               </div>

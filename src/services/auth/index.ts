@@ -61,3 +61,11 @@ export const useAuthentication = () => {
 
   return { createToken, getProfile, destroyToken }
 }
+
+export type AuthClientOptions = {
+
+}
+
+export function AuthClient() {
+
+}

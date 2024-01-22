@@ -9,6 +9,7 @@ import type { UserCredentials } from '@/entities/common'
 import { useAuthContext, useToken } from '@/providers/auth'
 import { useAuthentication } from '@/services/auth'
 import { defineSchema, useForm, useFormError } from '@/utils/misc'
+import { useEffect } from 'react'
 
 export type LoginForm = UserCredentials
 
@@ -60,9 +61,9 @@ export default function LoginPage() {
 
   const formError = useFormError(form)
 
-  if (isAuthenticated) {
-    return onRedirect('/dashboard')
-  }
+  useEffect(() => {
+    router.push(`/dashboard`)
+  }, [isAuthenticated])
 
   return (
     <div className="mx-auto mt-12 max-w-sm">
