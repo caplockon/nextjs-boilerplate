@@ -14,7 +14,7 @@ export default function AppProviders({
 }: PropsWithChildren &
   PropsWithLocaleParam & { params: { i18nMessages: AbstractIntlMessages } }) {
   return (
-    <AuthProvider>
+    <AuthProvider getUser={}>
       <ThemeProvider>
         <NextIntlClientProvider
           timeZone="UTC"

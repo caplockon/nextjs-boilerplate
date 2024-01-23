@@ -3,7 +3,7 @@
 import type { ComponentType, FC, JSX, PropsWithChildren } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import type { AuthToken, UserCredentials, UserProfile } from '@/entities/common'
+import type { AuthToken, UserProfile } from '@/entities/common'
 import { useAuthentication } from '@/services/auth'
 
 export type AuthContextProps = {
@@ -15,17 +15,20 @@ export type AuthContextProps = {
   onRedirect: (next: string) => JSX.Element
 }
 
+const loginWithRedirect = (next: string) => {
+  if (typeof window !== 'undefined')
+    window.location.href = `/login?next=${next}`
+}
+
+const onRedirect = (next: string) => {
+  if (typeof window !== 'undefined') window.location.href = next
+
+  return <div />
+}
+
 const initialContext: AuthContextProps = {
-  loginWithRedirect: (next: string) => {
-    if (typeof window !== 'undefined')
-      window.location.href = `/login?next=${next}`
-  },
-
-  onRedirect: (next: string) => {
-    if (typeof window !== 'undefined') window.location.href = next
-
-    return <div />
-  },
+  loginWithRedirect,
+  onRedirect,
 }
 
 const AuthContext = createContext<AuthContextProps>(initialContext)
@@ -52,48 +55,55 @@ export const useToken = () => {
   }
 }
 
-export const AuthProvider = ({ children }: PropsWithChildren) => {
+export type AuthProviderProps = PropsWithChildren & {
+  /**
+   * Return logged in user
+   */
+  getUser: () => Promise<UserProfile>,
+
+  /**
+   * Logout user
+   */
+  logout: () => Promise<any>
+
+  /**
+   * Login user with redirect
+   */
+  loginWithRedirect: () => any
+
+  /**
+   * Redirect user after logged
+   */
+  redirectLoggedIn: () => any
+}
+
+export const AuthProvider = ({ children, redirectLoggedIn, logout, loginWithRedirect, getUser }: AuthProviderProps) => {
   const [user, setUser] = useState<UserProfile>()
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const authAPI = useAuthentication()
-  const { token } = useToken()
-
-  const fetchUser = async () => {
-    const fetchedUser = token ? await authAPI.getProfile(token) : token
-    if (!fetchedUser) {
-      throw new Error('No user')
-    }
-    return fetchedUser
-  }
-
-  const logout = () => {
-    if (token) {
-      authAPI.destroyToken(token)
-    }
-  }
-
   useEffect(() => {
-    fetchUser()
-      .then((res) => {
-        setUser(res)
-        setIsAuthenticated(true)
-        setIsLoading(false)
-      })
-      .catch(() => {
-        setIsAuthenticated(false)
-        setIsLoading(false)
-      })
-  }, [token])
+    getUser()
+        .then((res) => {
+          setUser(res)
+          setIsAuthenticated(true)
+        })
+        .catch((e) => {
+          setUser(undefined)
+          setIsAuthenticated(false)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+  }, [getUser])
 
   const context = useMemo(() => {
     return {
       user,
       isLoading,
       isAuthenticated,
-      loginWithRedirect: initialContext.loginWithRedirect,
-      onRedirect: initialContext.onRedirect,
+      onRedirect,
+      loginWithRedirect,
       logout,
     }
   }, [user, isLoading, isAuthenticated])
@@ -138,7 +148,11 @@ export const withAuthenticationRequired = <P extends object>(
     const { unauthenticated = defaultUnauthenticated } = options
     const { isAuthenticated, isLoading } = useAuthContext()
 
-    return isAuthenticated ? <Component {...props} /> : <div />
+    if (isLoading) {
+      return <div />
+    }
+
+    return isAuthenticated ? <Component {...props} /> : unauthenticated()
   }
 }
 

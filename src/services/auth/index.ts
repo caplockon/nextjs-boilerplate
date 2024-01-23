@@ -21,8 +21,8 @@ export const useAuthentication = () => {
   async function createToken(userCredentials: UserCredentials) {
     const payload: AuthTokenPayload & UserCredentials = {
       grant_type: 'password',
-      client_id: '9b1a5107-68b9-4024-aaba-f9871737b04d',
-      client_secret: 'aEEB5MDaMlWQ0NmyaBoNMaAKiuoWs8B98lPyKf1X',
+      client_id: '9b278227-2d37-4700-b1af-db94b0878e8c',
+      client_secret: 'GAyUg2J2cm4f0a7T5k1GCFBw0lniju8To1HZwZYy',
       username: userCredentials.username,
       password: userCredentials.password,
       scope: '',

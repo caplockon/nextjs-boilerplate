@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react'
 
 import Navbar from '@/components/layout/navbar/Navbar'
 import Sidebar from '@/components/layout/sidebar/Sidebar'
-import { withAuthenticationRequired } from '@auth0/auth0-react'
+import {withAuthenticationRequired} from "@/providers/auth";
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
@@ -18,4 +18,4 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
   )
 }
 
-export default DashboardLayout
+export default withAuthenticationRequired(DashboardLayout)

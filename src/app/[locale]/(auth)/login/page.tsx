@@ -9,7 +9,6 @@ import type { UserCredentials } from '@/entities/common'
 import { useAuthContext, useToken } from '@/providers/auth'
 import { useAuthentication } from '@/services/auth'
 import { defineSchema, useForm, useFormError } from '@/utils/misc'
-import { useEffect } from 'react'
 
 export type LoginForm = UserCredentials
 
@@ -22,7 +21,7 @@ const loginFormSchema = defineSchema<LoginForm>((rule) => ({
 }))
 
 export default function LoginPage() {
-  const { isAuthenticated, onRedirect } = useAuthContext()
+  const { isAuthenticated, isLoading } = useAuthContext()
 
   const authAPI = useAuthentication()
   const { setToken } = useToken()
@@ -61,9 +60,14 @@ export default function LoginPage() {
 
   const formError = useFormError(form)
 
-  useEffect(() => {
-    router.push(`/dashboard`)
-  }, [isAuthenticated])
+  if (isLoading) {
+    return <div>Loading</div>
+  }
+
+  if (isAuthenticated) {
+    router.push('/dashboard')
+    return <div/>
+  }
 
   return (
     <div className="mx-auto mt-12 max-w-sm">
