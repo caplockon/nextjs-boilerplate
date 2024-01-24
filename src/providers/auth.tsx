@@ -1,193 +1,166 @@
 'use client'
 
-import type { ComponentType, FC, JSX, PropsWithChildren } from 'react'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  type ComponentType,
+  createContext,
+  type FC,
+  type JSX,
+  type PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
-import type { AuthToken, UserProfile } from '@/entities/common'
-import { useAuthentication } from '@/services/auth'
+import { LoadingState, useLoadingContext } from '@/components/general'
+import type { UserCredentials, UserProfile } from '@/entities/common'
+import AuthLoading from '@/providers/auth/AuthLoading'
+import AuthUnauthenticated from '@/providers/auth/AuthUnauthenticated'
+import type { AuthServer } from '@/services/auth'
+import { useToken } from '@/services/auth'
 
 export type AuthContextProps = {
   user?: UserProfile
-  isAuthenticated?: boolean
-  isLoading?: Boolean
-  loginWithRedirect: (next: string) => void
-  logout?: () => void
-  onRedirect: (next: string) => JSX.Element
+  isLoading: boolean
+  isAuthenticated: boolean
+  logout: () => Promise<any>
+  login: (credentials: UserCredentials) => Promise<UserProfile | any>
 }
 
-const loginWithRedirect = (next: string) => {
-  if (typeof window !== 'undefined')
-    window.location.href = `/login?next=${next}`
+const initialAuthContext = {
+  isLoading: false,
+  isAuthenticated: false,
+  logout: async () => {},
+  login: async () => {},
 }
 
-const onRedirect = (next: string) => {
-  if (typeof window !== 'undefined') window.location.href = next
-
-  return <div />
-}
-
-const initialContext: AuthContextProps = {
-  loginWithRedirect,
-  onRedirect,
-}
-
-const AuthContext = createContext<AuthContextProps>(initialContext)
-
-export const useToken = () => {
-  const storage = typeof window !== 'undefined' ? sessionStorage : undefined
-
-  const getToken = () => {
-    const tokenString = storage?.getItem('token')
-    const userToken = tokenString ? JSON.parse(tokenString) : undefined
-    return userToken?.access_token
-  }
-
-  const [token, setToken] = useState(getToken())
-
-  const saveToken = (userToken: AuthToken) => {
-    storage?.setItem('token', JSON.stringify(userToken))
-    setToken(userToken.access_token)
-  }
-
-  return {
-    setToken: saveToken,
-    token,
-  }
-}
+const AuthContext = createContext<AuthContextProps>(initialAuthContext)
 
 export type AuthProviderProps = PropsWithChildren & {
-  /**
-   * Return logged in user
-   */
-  getUser: () => Promise<UserProfile>,
-
-  /**
-   * Logout user
-   */
-  logout: () => Promise<any>
-
-  /**
-   * Login user with redirect
-   */
-  loginWithRedirect: () => any
-
-  /**
-   * Redirect user after logged
-   */
-  redirectLoggedIn: () => any
+  server: AuthServer
 }
-
-export const AuthProvider = ({ children, redirectLoggedIn, logout, loginWithRedirect, getUser }: AuthProviderProps) => {
+export const AuthProvider = ({ children, server }: AuthProviderProps) => {
   const [user, setUser] = useState<UserProfile>()
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+  const { token, setToken, removeToken } = useToken()
+
+  const unAuthenticate = () => {
+    setUser(undefined)
+    setIsAuthenticated(false)
+  }
+
+  const storeUser = (userObject: UserProfile) => {
+    setUser(userObject)
+    setIsAuthenticated(true)
+  }
+
+  const login = async (credentials: UserCredentials) => {
+    setIsLoading(true)
+    const response = await server.createToken(credentials)
+    setToken(response)
+    const loggedUser = await server.getProfile(response.access_token)
+    setUser(loggedUser)
+    setIsLoading(false)
+    return loggedUser
+  }
+
+  const logout = async () => {
+    setIsLoading(true)
+    if (token) {
+      await server.destroyToken(token.access_token)
+    }
+    removeToken()
+    setUser(undefined)
+    setIsAuthenticated(false)
+    setIsLoading(false)
+  }
+
+  const fetchUser = async () => {
+    setIsLoading(true)
+    let loggedInUser
+    try {
+      if (token) {
+        loggedInUser = await server.getProfile(token.access_token)
+      }
+    } catch (e) {
+      /* empty */
+    }
+    setIsLoading(false)
+    return loggedInUser
+  }
+
   useEffect(() => {
-    getUser()
-        .then((res) => {
-          setUser(res)
-          setIsAuthenticated(true)
-        })
-        .catch((e) => {
-          setUser(undefined)
-          setIsAuthenticated(false)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-  }, [getUser])
+    if (isAuthenticated) {
+      return
+    }
+
+    ;(async () => {
+      const loggedInUser = await fetchUser()
+      if (loggedInUser) {
+        storeUser(loggedInUser)
+      } else {
+        unAuthenticate()
+      }
+    })()
+  }, [token])
 
   const context = useMemo(() => {
     return {
       user,
       isLoading,
       isAuthenticated,
-      onRedirect,
-      loginWithRedirect,
       logout,
+      login,
     }
   }, [user, isLoading, isAuthenticated])
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
 }
 
-export const useAuthContext = () => {
-  return useContext(AuthContext)
-}
-
 export type AuthenticationOptions = {
-  /**
-   * Define the role can access the component
-   */
-  roles?: string[]
-
-  /**
-   * Define allowed scopes
-   */
-  scopes?: string[]
-
   /**
    * Handle when the user is not authenticated
    */
   unauthenticated?: () => JSX.Element
 }
 
-const defaultUnauthenticated = () => {
-  if (typeof window !== 'undefined') {
-    const next = `${window.location.pathname}${window.location.search}`
-    window.location.href = `/login?next=${next}`
-  }
-  return <div />
-}
-
+/**
+ * Higher component to check if the component need authentication before accessing
+ * @param Component
+ * @param options
+ */
 export const withAuthenticationRequired = <P extends object>(
   Component: ComponentType<P>,
   options: AuthenticationOptions = {}
 ): FC<P> => {
   return function WithAuthenticationRequired(props: P): JSX.Element {
-    const { unauthenticated = defaultUnauthenticated } = options
-    const { isAuthenticated, isLoading } = useAuthContext()
+    const { isAuthenticated, isLoading } =
+      useContext<AuthContextProps>(AuthContext)
+    const { setIsLoading } = useLoadingContext()
+
+    useEffect(() => {
+      setIsLoading(isLoading)
+    }, [isLoading, isAuthenticated])
 
     if (isLoading) {
-      return <div />
+      return <LoadingState />
     }
 
-    return isAuthenticated ? <Component {...props} /> : unauthenticated()
+    // Setup unauthenticated handle
+    const unauthenticatedHandler =
+      options.unauthenticated ||
+      (() => {
+        return <AuthUnauthenticated next="/login" />
+      })
+
+    setIsLoading(true)
+    return isAuthenticated ? <Component {...props} /> : unauthenticatedHandler()
   }
 }
 
-export type WithAuthorizationOptions = {
-  /**
-   * Handle when the user is not authorized
-   */
-  unauthorized?: () => JSX.Element
-
-  /**
-   * Granted permission for some roles
-   */
-  forRoles?: string[]
-
-  /**
-   * Granted permission for some scopes
-   */
-  forScopes?: string[]
-}
-
-export const withAuthorization = <P extends object>(
-  Component: ComponentType<P>,
-  options: WithAuthorizationOptions = {}
-): FC<P> => {
-  return function WithAuthorization(props: P): JSX.Element {
-    const { unauthorized = () => <span>Action is not authorized</span> } =
-      options
-    const { isAuthenticated } = useAuthContext()
-
-    if (isAuthenticated) {
-      return unauthorized()
-    }
-
-    // Check role and scope here
-
-    return <Component {...props} />
-  }
-}
+/**
+ * Export context to use
+ */
+export const useAuthContext = () => useContext(AuthContext)

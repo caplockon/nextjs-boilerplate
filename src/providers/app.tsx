@@ -4,8 +4,9 @@ import type { AbstractIntlMessages } from 'next-intl'
 import { NextIntlClientProvider } from 'next-intl'
 import type { PropsWithChildren } from 'react'
 
+import { LoadingStateProvider } from '@/components/general'
 import type { PropsWithLocaleParam } from '@/entities/common'
-import { AuthProvider } from '@/providers/auth'
+import AdminAuthProvider from '@/providers/auth/AdminAuthProvider'
 import { ThemeProvider } from '@/providers/theme'
 
 export default function AppProviders({
@@ -14,16 +15,19 @@ export default function AppProviders({
 }: PropsWithChildren &
   PropsWithLocaleParam & { params: { i18nMessages: AbstractIntlMessages } }) {
   return (
-    <AuthProvider getUser={}>
-      <ThemeProvider>
-        <NextIntlClientProvider
-          timeZone="UTC"
-          locale={locale}
-          messages={i18nMessages}
-        >
-          {children}
-        </NextIntlClientProvider>
-      </ThemeProvider>
-    </AuthProvider>
+    <>
+      <AdminAuthProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider
+            timeZone="UTC"
+            locale={locale}
+            messages={i18nMessages}
+          >
+            {children}
+          </NextIntlClientProvider>
+        </ThemeProvider>
+      </AdminAuthProvider>
+      <LoadingStateProvider />
+    </>
   )
 }

@@ -5,6 +5,7 @@ import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
 import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { PageMetadata, PropsWithLocaleParam } from '@/entities/common'
 import { LenderListView } from '@/views/lender'
+import { XLink } from '@/components/general'
 
 export async function generateMetadata(
   props: PropsWithLocaleParam
@@ -31,7 +32,7 @@ export default function IndexPage() {
     <div>
       <PageHeader
         breadcrumb={breadcrumb}
-        rightHeader={<a href="/lenders/create">Create New Lender</a>}
+        rightHeader={<XLink link="/lenders/create">Create New Lender</XLink>}
       >
         Lender Clients
       </PageHeader>

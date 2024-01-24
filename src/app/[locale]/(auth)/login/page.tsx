@@ -1,14 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 import { XHeading2 } from '@/components/data-display/heading2/XHeading2'
 import { XInput } from '@/components/forms'
 import { XButton } from '@/components/general/button/XButton'
 import type { UserCredentials } from '@/entities/common'
-import { useAuthContext, useToken } from '@/providers/auth'
-import { useAuthentication } from '@/services/auth'
+import { useAuthContext } from '@/providers/auth'
 import { defineSchema, useForm, useFormError } from '@/utils/misc'
+import { LoadingState } from '@/components/general'
 
 export type LoginForm = UserCredentials
 
@@ -21,16 +22,14 @@ const loginFormSchema = defineSchema<LoginForm>((rule) => ({
 }))
 
 export default function LoginPage() {
-  const { isAuthenticated, isLoading } = useAuthContext()
+  const { isAuthenticated, isLoading, login } = useAuthContext()
 
-  const authAPI = useAuthentication()
-  const { setToken } = useToken()
   const router = useRouter()
 
   // Define initial value for form
   const initialLoginForm = {
-    username: '',
-    password: '',
+    username: 'phucnguyen@besmartee.com',
+    password: 'Abc12345',
   }
 
   const form = useForm<LoginForm>({
@@ -49,24 +48,20 @@ export default function LoginPage() {
      * @param values
      */
     onSubmit: (values) => {
-      authAPI
-        .createToken(values)
-        .then((res) => setToken(res))
-        .then(() => {
-          router.push(`/dashboard`)
-        })
+      login(values).then(() => router.push(`/dashboard`))
     },
   })
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    }
+  }, [isLoading, isAuthenticated])
 
   const formError = useFormError(form)
 
   if (isLoading) {
-    return <div>Loading</div>
-  }
-
-  if (isAuthenticated) {
-    router.push('/dashboard')
-    return <div/>
+    return <LoadingState />
   }
 
   return (

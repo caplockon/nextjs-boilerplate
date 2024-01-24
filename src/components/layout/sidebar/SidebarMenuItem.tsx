@@ -17,7 +17,7 @@ export default function SidebarMenuItem({
     <li>
       <a
         {...others}
-        className="group cursor-pointer flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+        className="group flex cursor-pointer items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
       >
         {icon}
         {label && <span className="ms-3">{label}</span>}

@@ -1,11 +1,18 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import AppLogo from '@/components/layout/navbar/AppLogo'
 import { UserMenu, UserMenuItem } from '@/components/layout/navbar/UserMenu'
 import { useAuthContext } from '@/providers/auth'
 
 export default function Navbar() {
   const { user, logout } = useAuthContext()
+  const router = useRouter()
+  const handleLogout = () => {
+    logout().then(() => router.push('/login'))
+  }
+
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
       <div className="p-3 lg:px-5 lg:pl-3">
@@ -19,7 +26,7 @@ export default function Navbar() {
               <div className="lex ms-3 items-center">
                 <UserMenu user={user}>
                   <UserMenuItem>Dashboard </UserMenuItem>
-                  <UserMenuItem onClick={logout}>Sign-Out</UserMenuItem>
+                  <UserMenuItem onClick={handleLogout}>Sign-Out</UserMenuItem>
                 </UserMenu>
               </div>
             </div>

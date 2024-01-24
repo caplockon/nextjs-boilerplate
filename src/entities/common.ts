@@ -49,11 +49,12 @@ export type UserProfile = {
 export type UserCredentials = {
   username?: string
   password?: string
+  scope?: string
 }
 
 export type AuthToken = {
-  token_type?: string
-  expires_in?: number
-  access_token?: string
-  refresh_token?: string
+  token_type: string
+  expires_in: number
+  access_token: string
+  refresh_token: string
 }

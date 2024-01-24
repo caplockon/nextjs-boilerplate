@@ -11,54 +11,59 @@ import type { PaginatorMeta } from '@/entities/laravel-conventions'
 import type { Lender } from '@/entities/lender'
 import { useLenderAPI } from '@/services/lender'
 import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions'
+import { XLink } from '@/components/general'
 
 type LenderRow = Lender & {}
 
-const columns: XTableColumn<LenderRow>[] = [
-  {
-    name: 'uid',
-    label: 'Uid',
-    render: (lender) => (
-      <a href={`/lenders/${lender.uid}`}>
-        <XTag>{lender.uid?.substring(0, 8)}</XTag>
-      </a>
-    ),
-  },
-  {
-    name: 'logo',
-    label: 'Logo',
-    render: (lender) => <XAvatar src={lender.logo} />,
-  },
-  {
-    name: 'name',
-    label: 'Name',
-  },
-  {
-    name: 'is_active',
-    label: 'Is Active',
-    render: (lender) => (lender.is_active ? 'Yes' : 'No'),
-    cellClass: 'text-center',
-    theadClass: 'text-center',
-  },
-  {
-    name: 'created_at',
-    label: 'Created At',
-    render: (lender) => dayjs(lender.created_at).format('MMM d, YYYY'),
-  },
-  {
-    name: 'actions',
-    label: 'Actions',
-    render: () => <LenderEntireActions />,
-    cellClass: 'text-center',
-    theadClass: 'text-center',
-  },
-]
+function useLenderTableColumns(): XTableColumn<LenderRow>[] {
+  return [
+    {
+      name: 'uid',
+      label: 'Uid',
+      render: (lender) => (
+        // eslint-disable-next-line jsx-a11y/anchor-is-valid
+        <XLink link={`/lenders/${lender.uid}`}>
+          <XTag>{lender.uid?.substring(0, 8)}</XTag>
+        </XLink>
+      ),
+    },
+    {
+      name: 'logo',
+      label: 'Logo',
+      render: (lender) => <XAvatar src={lender.logo} />,
+    },
+    {
+      name: 'name',
+      label: 'Name',
+    },
+    {
+      name: 'is_active',
+      label: 'Is Active',
+      render: (lender) => (lender.is_active ? 'Yes' : 'No'),
+      cellClass: 'text-center',
+      theadClass: 'text-center',
+    },
+    {
+      name: 'created_at',
+      label: 'Created At',
+      render: (lender) => dayjs(lender.created_at).format('MMM d, YYYY'),
+    },
+    {
+      name: 'actions',
+      label: 'Actions',
+      render: () => <LenderEntireActions />,
+      cellClass: 'text-center',
+      theadClass: 'text-center',
+    },
+  ]
+}
 
 export function LenderListView() {
   const [paginatorMeta, setPaginatorMeta] = useState<PaginatorMeta>()
   const [dataSource, setDataSource] = useState<LenderRow[]>([])
   const getLenderList = useLenderAPI<LenderRow>().list
   const pageSize = 5
+  const columns = useLenderTableColumns()
 
   const fetchLender = (page: number, size: number) => {
     getLenderList({ per_page: size, page }).then((res) => {

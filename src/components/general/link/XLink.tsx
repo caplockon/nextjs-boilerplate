@@ -1,16 +1,25 @@
+'use client'
+
 import clsx from 'clsx'
+import { useRouter } from 'next/navigation'
 import type { AnchorHTMLAttributes, PropsWithChildren, ReactNode } from 'react'
 
 export type XLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
   PropsWithChildren & {
     tooltip?: string | ReactNode
+    link?: string
   }
 
 export const XLink = (props: XLinkProps) => {
-  const { tooltip, className, children, ...others } = props
-
+  const { tooltip, className, onClick, children, link, ...others } = props
+  const router = useRouter()
+  const handleClick = link ? () => router.push(link) : onClick
   return (
-    <a {...others} className={clsx(className, 'relative')}>
+    <a
+      {...others}
+      onClick={handleClick}
+      className={clsx(className, 'relative cursor-pointer')}
+    >
       {tooltip && (
         <div
           role="tooltip"

@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, PropsWithChildren } from 'react'
 
+import { XLink } from '@/components/general'
 import { XDropdown } from '@/components/navigation/dropdown/XDropdown'
 import type { UserProfile } from '@/entities/common'
 
@@ -26,13 +27,13 @@ export type UserMenuItemProps = AnchorHTMLAttributes<HTMLAnchorElement> &
 export function UserMenuItem({ children, ...others }: UserMenuItemProps) {
   return (
     <li>
-      <a
+      <XLink
         {...others}
         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
         role="menuitem"
       >
         {children}
-      </a>
+      </XLink>
     </li>
   )
 }
