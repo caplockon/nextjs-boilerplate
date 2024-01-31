@@ -1,18 +1,20 @@
 import clsx from 'clsx'
-import type { HTMLAttributes, PropsWithChildren } from 'react'
 
-export type XCardProps = PropsWithChildren & HTMLAttributes<HTMLDivElement> & {}
+import type { XBoxProps } from '@/components/data-display'
+import { XBox } from '@/components/data-display'
+
+export type XCardProps = XBoxProps & {}
 
 export const XCard = (props: XCardProps) => {
   const { children, className } = props
   return (
-    <div
+    <XBox
       className={clsx(
         className,
         'rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
       )}
     >
       {children}
-    </div>
+    </XBox>
   )
 }

@@ -14,7 +14,6 @@ import {
 
 import { LoadingState, useLoadingContext } from '@/components/general'
 import type { UserCredentials, UserProfile } from '@/entities/common'
-import AuthLoading from '@/providers/auth/AuthLoading'
 import AuthUnauthenticated from '@/providers/auth/AuthUnauthenticated'
 import type { AuthServer } from '@/services/auth'
 import { useToken } from '@/services/auth'

@@ -1,5 +1,6 @@
 'use client'
 
+import { QueryClientProvider } from '@tanstack/react-query'
 import type { AbstractIntlMessages } from 'next-intl'
 import { NextIntlClientProvider } from 'next-intl'
 import type { PropsWithChildren } from 'react'
@@ -7,6 +8,7 @@ import type { PropsWithChildren } from 'react'
 import { LoadingStateProvider } from '@/components/general'
 import type { PropsWithLocaleParam } from '@/entities/common'
 import AdminAuthProvider from '@/providers/auth/AdminAuthProvider'
+import { queryClient } from '@/providers/react-query'
 import { ThemeProvider } from '@/providers/theme'
 
 export default function AppProviders({
@@ -23,7 +25,9 @@ export default function AppProviders({
             locale={locale}
             messages={i18nMessages}
           >
-            {children}
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </AdminAuthProvider>

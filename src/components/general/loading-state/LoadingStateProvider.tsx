@@ -18,7 +18,6 @@ export const useLoadingContext = () => useContext(LoadingContext)
 
 export const LoadingState = () => {
   const { isLoading } = useLoadingContext()
-
   return (
     isLoading && (
       <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-white opacity-80">

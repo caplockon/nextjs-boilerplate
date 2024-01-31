@@ -7,11 +7,11 @@ import type { XTableColumn } from '@/components/collection'
 import { XPagination, XTable } from '@/components/collection'
 import { XAvatar, XTag } from '@/components/data-display'
 import { XCard } from '@/components/data-display/card/XCard'
+import { XLink } from '@/components/general'
 import type { PaginatorMeta } from '@/entities/laravel-conventions'
 import type { Lender } from '@/entities/lender'
-import { useLenderAPI } from '@/services/lender'
+import { useFetchLender } from '@/services/lender'
 import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions'
-import { XLink } from '@/components/general'
 
 type LenderRow = Lender & {}
 
@@ -61,20 +61,36 @@ function useLenderTableColumns(): XTableColumn<LenderRow>[] {
 export function LenderListView() {
   const [paginatorMeta, setPaginatorMeta] = useState<PaginatorMeta>()
   const [dataSource, setDataSource] = useState<LenderRow[]>([])
-  const getLenderList = useLenderAPI<LenderRow>().list
   const pageSize = 5
   const columns = useLenderTableColumns()
+  const fetchLender = useFetchLender<LenderRow>()
 
-  const fetchLender = (page: number, size: number) => {
-    getLenderList({ per_page: size, page }).then((res) => {
-      setDataSource(res.data)
-      setPaginatorMeta(res.meta)
-    })
-  }
+  // const fetchLender = useCallback(
+  //   (page: number, size: number) => {
+  //     setIsLoading(true)
+  //     getLenderList({ per_page: size, page })
+  //       .then((res) => {
+  //         setDataSource(res.data)
+  //         setPaginatorMeta(res.meta)
+  //       })
+  //       .finally(() => {
+  //         setIsLoading(false)
+  //       })
+  //   },
+  //   [getLenderList]
+  // )
 
   useEffect(() => {
-    fetchLender(1, pageSize)
-  }, [])
+    fetchLender
+      .mutateAsync({
+        page: 1,
+        per_page: pageSize,
+      })
+      .then((result) => {
+        setPaginatorMeta(result.meta)
+        setDataSource(result.data)
+      })
+  }, [pageSize, paginatorMeta])
 
   return (
     <XCard className="py-4">
@@ -91,7 +107,17 @@ export function LenderListView() {
             pageSize={paginatorMeta.per_page}
             defaultCurrent={paginatorMeta.current_page}
             total={paginatorMeta.total}
-            onChange={fetchLender}
+            onChange={(page: number) => {
+              fetchLender
+                .mutateAsync({
+                  page,
+                  per_page: pageSize,
+                })
+                .then((res) => {
+                  setPaginatorMeta(res.meta)
+                  setDataSource(res.data)
+                })
+            }}
           />
         </div>
       )}

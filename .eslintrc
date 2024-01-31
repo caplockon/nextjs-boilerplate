@@ -65,7 +65,7 @@
                     "error",
                     { "argsIgnorePattern": "^_" }
                 ],
-                "tailwindcss/no-custom-classname": "off",
+                "tailwindcss/no-custom-classname": "off"
             }
         }
     ]
