@@ -7,7 +7,7 @@ import { XAddress } from '@/components/forms/address/XAddress'
 import { XButton } from '@/components/general/button/XButton'
 import type { Address } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
-import { useLenderAPI } from '@/services/lender'
+import { useCreateLender } from '@/services/pos/lender'
 import { useForm, useFormError } from '@/utils/misc'
 import LenderUploadLogo from '@/views/lender/components/LenderUploadLogo'
 import { lenderSchema } from '@/views/lender/validation'
@@ -15,7 +15,7 @@ import { lenderSchema } from '@/views/lender/validation'
 export type NewLenderForm = Lender & {}
 
 const LenderCreateView = () => {
-  const lenderAPI = useLenderAPI()
+  const createLender = useCreateLender()
   const router = useRouter()
 
   // Initialize address data for lender
@@ -45,7 +45,7 @@ const LenderCreateView = () => {
      * Handle when form is submitted
      */
     onSubmit: (values) => {
-      lenderAPI.create(values).then((resource) => {
+      createLender.mutateAsync({ payload: values }).then((resource) => {
         router.push(`/lenders/${resource.data.uid}`)
       })
     },

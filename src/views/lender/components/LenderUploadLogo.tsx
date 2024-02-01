@@ -1,12 +1,11 @@
 'use client'
 
 import type { ChangeEvent } from 'react'
-import { useState } from 'react'
 
 import type { XUploadProps } from '@/components/forms'
 import { XUpload } from '@/components/forms'
 import type { UploadedSingleFileResponse } from '@/entities/common'
-import { useUploadAPI } from '@/services/lender'
+import { useUploadSingleFile } from '@/services/pos/file-upload'
 
 export type LenderUploadLogoProps = XUploadProps & {
   logo?: string
@@ -16,22 +15,14 @@ export type LenderUploadLogoProps = XUploadProps & {
 
 const LenderUploadLogo = (props: LenderUploadLogoProps) => {
   const { logo, onLogoChanged = () => {}, ...others } = props
-  const uploadAPI = useUploadAPI()
-
-  /**
-   * State to know the lender logo is uploading
-   */
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false)
+  const uploadSingleFile = useUploadSingleFile()
 
   const handleLogoChanged = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target?.files?.item(0)
 
     if (file) {
       // Upload file to server
-      setIsUploadingLogo(true)
-      const uploadedFileResponse = await uploadAPI.uploadFile(file)
-      setIsUploadingLogo(false)
-
+      const uploadedFileResponse = await uploadSingleFile.mutateAsync({ file })
       // Update log path to the form
       if (uploadedFileResponse.path) {
         onLogoChanged(uploadedFileResponse.path)
@@ -54,7 +45,7 @@ const LenderUploadLogo = (props: LenderUploadLogoProps) => {
       }
       multiple={false}
       onChange={handleLogoChanged}
-      isLoading={isUploadingLogo}
+      isLoading={uploadSingleFile.isPending}
       {...others}
     />
   )

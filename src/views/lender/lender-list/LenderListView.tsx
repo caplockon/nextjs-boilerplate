@@ -10,7 +10,7 @@ import { XCard } from '@/components/data-display/card/XCard'
 import { XLink } from '@/components/general'
 import type { PaginatorMeta } from '@/entities/laravel-conventions'
 import type { Lender } from '@/entities/lender'
-import { useFetchLender } from '@/services/lender'
+import { useFetchLender } from '@/services/pos/lender'
 import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions'
 
 type LenderRow = Lender & {}
@@ -63,22 +63,7 @@ export function LenderListView() {
   const [dataSource, setDataSource] = useState<LenderRow[]>([])
   const pageSize = 5
   const columns = useLenderTableColumns()
-  const fetchLender = useFetchLender<LenderRow>()
-
-  // const fetchLender = useCallback(
-  //   (page: number, size: number) => {
-  //     setIsLoading(true)
-  //     getLenderList({ per_page: size, page })
-  //       .then((res) => {
-  //         setDataSource(res.data)
-  //         setPaginatorMeta(res.meta)
-  //       })
-  //       .finally(() => {
-  //         setIsLoading(false)
-  //       })
-  //   },
-  //   [getLenderList]
-  // )
+  const fetchLender = useFetchLender()
 
   useEffect(() => {
     fetchLender
@@ -90,10 +75,10 @@ export function LenderListView() {
         setPaginatorMeta(result.meta)
         setDataSource(result.data)
       })
-  }, [pageSize, paginatorMeta])
+  }, [pageSize])
 
   return (
-    <XCard className="py-4">
+    <XCard className="py-4" isLoading={fetchLender.isPending}>
       <XTable
         columns={columns}
         dataSource={dataSource}

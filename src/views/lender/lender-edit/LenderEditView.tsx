@@ -11,11 +11,11 @@ import {
   IconHomeOutline,
   IconWarning,
 } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import type { BreadcrumbItem } from '@/components/layout/breadcrumb/Breadcrumb'
 import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { Address, KeysOf } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
-import { useLenderAPI } from '@/services/lender'
+import { useUpdateLender } from '@/services/pos/lender'
 import { useForm, useFormError } from '@/utils/misc'
 import LenderUploadLogo from '@/views/lender/components/LenderUploadLogo'
 import { lenderSchema } from '@/views/lender/validation'
@@ -33,7 +33,7 @@ const LenderEditView = memo((props: LenderEditViewProps) => {
   /**
    * Initialize APIs to interact with lender object
    */
-  const lenderAPI = useLenderAPI()
+  const updateLender = useUpdateLender()
 
   /**
    * Create new form instance for the given lender object
@@ -54,8 +54,11 @@ const LenderEditView = memo((props: LenderEditViewProps) => {
      * This will be trigger after all fields of form are validated
      * @param values
      */
-    onSubmit: async (values) => {
-      await lenderAPI.update(lender.uid ?? '', values)
+    onSubmit: (values) => {
+      return updateLender.mutateAsync({
+        uid: lender.uid ?? '',
+        payload: values,
+      })
     },
   })
 

@@ -7,12 +7,12 @@ export type SidebarMenuItemProps = PropsWithChildren &
     label?: string
   }
 
-export default function SidebarMenuItem({
+export const SidebarMenuItem = ({
   children,
   icon,
   label,
   ...others
-}: SidebarMenuItemProps) {
+}: SidebarMenuItemProps) => {
   return (
     <li>
       <a

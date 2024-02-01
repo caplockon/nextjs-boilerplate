@@ -13,7 +13,7 @@ export type BreadcrumbProps = {
   items?: BreadcrumbItem[]
 }
 
-export default function Breadcrumb({ items }: BreadcrumbProps) {
+export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav className="flex py-3 text-gray-700" aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 align-middle md:space-x-2 rtl:space-x-reverse">

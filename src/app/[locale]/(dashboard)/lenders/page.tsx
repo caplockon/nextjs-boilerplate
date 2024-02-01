@@ -1,11 +1,11 @@
 import { getTranslations } from 'next-intl/server'
 
+import { XLink } from '@/components/general'
 import { IconHomeOutline } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import type { BreadcrumbItem } from '@/components/layout/breadcrumb/Breadcrumb'
 import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { PageMetadata, PropsWithLocaleParam } from '@/entities/common'
 import { LenderListView } from '@/views/lender'
-import { XLink } from '@/components/general'
 
 export async function generateMetadata(
   props: PropsWithLocaleParam

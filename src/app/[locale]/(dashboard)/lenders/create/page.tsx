@@ -1,5 +1,5 @@
 import { IconHomeOutline } from '@/components/icons'
-import type { BreadcrumbItem } from '@/components/layout/page-header/Breadcrumb'
+import type { BreadcrumbItem } from '@/components/layout/breadcrumb/Breadcrumb'
 import PageHeader from '@/components/layout/page-header/PageHeader'
 import LenderCreateView from '@/views/lender/lender-create/LenderCreateView'
 

@@ -2,11 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 
-import AppLogo from '@/components/layout/navbar/AppLogo'
-import { UserMenu, UserMenuItem } from '@/components/layout/navbar/UserMenu'
+import { AppLogo } from '@/components/layout/app-logo/AppLogo'
+import { UserMenu, UserMenuItem } from '@/components/layout/user-menu/UserMenu'
 import { useAuthContext } from '@/providers/auth'
 
-export default function Navbar() {
+export function Navbar() {
   const { user, logout } = useAuthContext()
   const router = useRouter()
   const handleLogout = () => {

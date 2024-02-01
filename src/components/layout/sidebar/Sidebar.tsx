@@ -1,13 +1,14 @@
+import { useRouter } from 'next/navigation'
+
 import {
   IconDashboard,
   IconLender,
   IconSettingsOutline,
 } from '@/components/icons'
-import SidebarMenu from '@/components/layout/sidebar/SidebarMenu'
-import SidebarMenuItem from '@/components/layout/sidebar/SidebarMenuItem'
-import { useRouter } from 'next/navigation'
+import { SidebarMenu } from '@/components/layout/sidebar-menu/SidebarMenu'
+import { SidebarMenuItem } from '@/components/layout/sidebar-menu-item/SidebarMenuItem'
 
-export default function Sidebar() {
+export function Sidebar() {
   const router = useRouter()
   return (
     <aside

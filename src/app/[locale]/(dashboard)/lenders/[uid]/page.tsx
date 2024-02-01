@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 import type { Lender } from '@/entities/lender'
-import { useLenderAPI } from '@/services/lender'
+import { useGetLender } from '@/services/pos/lender'
 import LenderEditView from '@/views/lender/lender-edit/LenderEditView'
 
 type LenderEditPageProp = {
@@ -13,12 +13,12 @@ type LenderEditPageProp = {
 }
 
 const LenderEditPage = (props: LenderEditPageProp) => {
-  const lenderAPI = useLenderAPI<Lender>()
+  const getLender = useGetLender()
   const [lender, setLender] = useState<Lender>()
 
   useEffect(() => {
-    lenderAPI.get(props.params.uid).then((res) => setLender(res.data))
-  }, [])
+    getLender.mutateAsync(props.params.uid).then((res) => setLender(res.data))
+  }, [props])
   return <div>{lender && <LenderEditView lender={lender} />}</div>
 }
 

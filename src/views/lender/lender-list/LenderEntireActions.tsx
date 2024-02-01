@@ -1,3 +1,5 @@
+'use client'
+
 import { XButton } from '@/components/general/button/XButton'
 import { IconTrash } from '@/components/icons'
 
