@@ -11,7 +11,7 @@ export type XBoxProps = PropsWithChildren &
 export const XBoxLoading = () => {
   return (
     <div className="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-white opacity-80">
-      <IconSpinner className="animate-spin" size={20} />
+      <IconSpinner className="animate-spin" size={30} />
     </div>
   )
 }

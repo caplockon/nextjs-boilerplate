@@ -8,14 +8,23 @@ import { XPagination, XTable } from '@/components/collection'
 import { XAvatar, XTag } from '@/components/data-display'
 import { XCard } from '@/components/data-display/card/XCard'
 import { XLink } from '@/components/general'
-import type { PaginatorMeta } from '@/entities/laravel-conventions'
+import type {
+  PaginatorMeta,
+  PaginatorResponse,
+} from '@/entities/laravel-conventions'
 import type { Lender } from '@/entities/lender'
 import { useFetchLender } from '@/services/pos/lender'
 import LenderEntireActions from '@/views/lender/lender-list/LenderEntireActions'
 
 type LenderRow = Lender & {}
 
-function useLenderTableColumns(): XTableColumn<LenderRow>[] {
+type TableColumnDefinitionOptions = {
+  onDeletedLender?: () => void
+}
+
+function useLenderTableColumns(
+  options: TableColumnDefinitionOptions = {}
+): XTableColumn<LenderRow>[] {
   return [
     {
       name: 'uid',
@@ -51,7 +60,14 @@ function useLenderTableColumns(): XTableColumn<LenderRow>[] {
     {
       name: 'actions',
       label: 'Actions',
-      render: () => <LenderEntireActions />,
+      render: (lender: Lender) => {
+        return (
+          <LenderEntireActions
+            lender={lender}
+            onDeleted={options.onDeletedLender}
+          />
+        )
+      },
       cellClass: 'text-center',
       theadClass: 'text-center',
     },
@@ -62,8 +78,24 @@ export function LenderListView() {
   const [paginatorMeta, setPaginatorMeta] = useState<PaginatorMeta>()
   const [dataSource, setDataSource] = useState<LenderRow[]>([])
   const pageSize = 5
-  const columns = useLenderTableColumns()
   const fetchLender = useFetchLender()
+  const setPageData = (result: PaginatorResponse<Lender>) => {
+    setPaginatorMeta(result.meta)
+    setDataSource(result.data)
+  }
+
+  const refresh = () => {
+    fetchLender
+      .mutateAsync({
+        page: paginatorMeta?.current_page,
+        per_page: pageSize,
+      })
+      .then(setPageData)
+  }
+
+  const columns = useLenderTableColumns({
+    onDeletedLender: refresh,
+  })
 
   useEffect(() => {
     fetchLender
@@ -71,10 +103,7 @@ export function LenderListView() {
         page: 1,
         per_page: pageSize,
       })
-      .then((result) => {
-        setPaginatorMeta(result.meta)
-        setDataSource(result.data)
-      })
+      .then(setPageData)
   }, [pageSize])
 
   return (
@@ -98,10 +127,7 @@ export function LenderListView() {
                   page,
                   per_page: pageSize,
                 })
-                .then((res) => {
-                  setPaginatorMeta(res.meta)
-                  setDataSource(res.data)
-                })
+                .then(setPageData)
             }}
           />
         </div>

@@ -1,19 +1,39 @@
 'use client'
 
-import { useState } from 'react'
-
-import { XModal } from '@/components/data-display'
+import { XBox } from '@/components/data-display'
+import { XButton } from '@/components/general/button/XButton'
 import type { Lender } from '@/entities/lender'
+import { useModalContext } from '@/providers/modal'
+import { useDeleteLender } from '@/services/pos/lender/delete-lender/delete-lender'
 
 type DeleteLenderModalProps = {
   lender: Lender
+  onDeleted?: () => void
 }
 
-export const DeleteLenderModal = ({ lender }: DeleteLenderModalProps) => {
-  const [open, setOpen] = useState(true)
+export const DeleteLenderModal = (props: DeleteLenderModalProps) => {
+  const { lender, onDeleted } = props
+  const deleteLender = useDeleteLender()
+  const { hideModal } = useModalContext()
+
+  const handleDeleteLender = async () => {
+    if (lender.uid) {
+      await deleteLender.mutateAsync({ uid: lender.uid })
+      hideModal()
+      onDeleted?.()
+    }
+  }
+
   return (
-    <XModal open={open} onClose={() => setOpen(false)} title="Delete Lender">
-      <div>{lender.name}</div>
-    </XModal>
+    <XBox className="text-center" isLoading={deleteLender.isPending}>
+      <p>
+        Once you click the delete button later, the {lender.name} lender will be
+        removed and cannot be restore. <br /> Are you sure to delete?
+      </p>
+
+      <div className="mt-5">
+        <XButton onClick={handleDeleteLender}>Delete</XButton>
+      </div>
+    </XBox>
   )
 }
