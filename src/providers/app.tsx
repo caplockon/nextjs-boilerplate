@@ -9,6 +9,7 @@ import { LoadingStateProvider } from '@/components/general'
 import type { PropsWithLocaleParam } from '@/entities/common'
 import AdminAuthProvider from '@/providers/auth/AdminAuthProvider'
 import { ModalProvider } from '@/providers/modal'
+import { NotificationProvider } from '@/providers/notification'
 import { queryClient } from '@/providers/react-query'
 import { ThemeProvider } from '@/providers/theme'
 
@@ -27,7 +28,9 @@ export default function AppProviders({
             messages={i18nMessages}
           >
             <QueryClientProvider client={queryClient}>
-              <ModalProvider>{children}</ModalProvider>
+              <NotificationProvider>
+                <ModalProvider>{children}</ModalProvider>
+              </NotificationProvider>
             </QueryClientProvider>
           </NextIntlClientProvider>
         </ThemeProvider>

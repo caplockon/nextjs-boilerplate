@@ -4,6 +4,7 @@ import { XBox } from '@/components/data-display'
 import { XButton } from '@/components/general/button/XButton'
 import type { Lender } from '@/entities/lender'
 import { useModalContext } from '@/providers/modal'
+import { useNotificationContext } from '@/providers/notification'
 import { useDeleteLender } from '@/services/pos/lender/delete-lender/delete-lender'
 
 type DeleteLenderModalProps = {
@@ -14,6 +15,7 @@ type DeleteLenderModalProps = {
 export const DeleteLenderModal = (props: DeleteLenderModalProps) => {
   const { lender, onDeleted } = props
   const deleteLender = useDeleteLender()
+  const { pushNotification } = useNotificationContext()
   const { hideModal } = useModalContext()
 
   const handleDeleteLender = async () => {
@@ -21,6 +23,10 @@ export const DeleteLenderModal = (props: DeleteLenderModalProps) => {
       await deleteLender.mutateAsync({ uid: lender.uid })
       hideModal()
       onDeleted?.()
+      pushNotification({
+        title: 'Delete Successfully',
+        message: 'Deketed',
+      })
     }
   }
 
