@@ -24,8 +24,7 @@ export const DeleteLenderModal = (props: DeleteLenderModalProps) => {
       hideModal()
       onDeleted?.()
       pushNotification({
-        title: 'Delete Successfully',
-        message: 'Deketed',
+        message: `Deleted lender ${lender.name}`,
       })
     }
   }

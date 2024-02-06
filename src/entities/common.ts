@@ -58,3 +58,8 @@ export type AuthToken = {
   access_token: string
   refresh_token: string
 }
+
+export type Notification = {
+  message: string
+  key?: string
+}

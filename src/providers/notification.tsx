@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { v4 } from 'uuid'
 
 type NotificationContextType = {
   pushNotification: (item: NotificationItem) => void
@@ -12,13 +13,10 @@ const NotificationContext = createContext<NotificationContextType>({
 type NotificationProviderProps = PropsWithChildren & {}
 
 export type NotificationItem = {
+  key?: string
   title?: string
   message: string
   status?: 'success' | 'error' | 'warning' | 'info'
-}
-
-export type DisplayedNotificationItem = NotificationItem & {
-  initialAt: Date
 }
 
 export const useNotificationContext = () => useContext(NotificationContext)
@@ -27,28 +25,31 @@ export const NotificationProvider = ({
   children,
 }: NotificationProviderProps) => {
   const [notificationItems, setNotificationItems] = useState<
-    DisplayedNotificationItem[]
+    NotificationItem[]
   >([])
 
-  const pushNotification = (item: NotificationItem) => {
-    const displayedItem: DisplayedNotificationItem = {
+  const pushNotification = (item: Omit<NotificationItem, 'key'>) => {
+    const displayedItem: NotificationItem = {
       ...item,
-      initialAt: new Date(),
+      key: v4(),
     }
-    setNotificationItems([displayedItem])
+    setNotificationItems([...notificationItems, displayedItem])
   }
 
+  const activeNotificationIds = notificationItems
+    .map((item) => item.key)
+    .join(',')
+
   useEffect(() => {
-    setInterval(() => {
-      setNotificationItems(
-        notificationItems.filter((item) => {
-          const time = new Date().getTime() - item.initialAt.getTime()
-          console.log(time)
-          return time < 10000
-        })
-      )
-    }, 500)
-  }, [])
+    if (activeNotificationIds.length > 0) {
+      const timer = setTimeout(() => {
+        setNotificationItems(
+          notificationItems.slice(0, notificationItems.length - 1)
+        )
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [activeNotificationIds])
 
   const context = useMemo(() => {
     return { pushNotification }
