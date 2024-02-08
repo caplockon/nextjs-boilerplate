@@ -5,9 +5,9 @@ import { useAuthServer } from '@/services/auth'
 
 const AdminAuthProvider = ({ children }: PropsWithChildren) => {
   const auth = useAuthServer({
-    baseUrl: 'http://localhost:8081',
-    client_id: '9b390e27-455f-4568-8174-68c4d6cd6815',
-    client_secret: '8RvEpeDzj693zmGdKUJJMVf6KiWSxkkd6GOUmWYi',
+    baseUrl: process.env.NEXT_PUBLIC_POS_API_URL || '',
+    client_id: process.env.NEXT_PUBLIC_POS_API_ID || '',
+    client_secret: process.env.NEXT_PUBLIC_POS_API_SECRET || '',
   })
 
   return <AuthProvider server={auth}>{children}</AuthProvider>
