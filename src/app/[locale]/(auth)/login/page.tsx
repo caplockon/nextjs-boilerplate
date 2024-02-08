@@ -7,8 +7,8 @@ import { XHeading2 } from '@/components/data-display/heading2/XHeading2'
 import { XInput } from '@/components/forms'
 import { XButton } from '@/components/general/button/XButton'
 import type { UserCredentials } from '@/entities/common'
-import { useAuthContext } from '@/providers/auth'
-import { defineSchema, useForm, useFormError } from '@/utils/misc'
+import { useAuthContext } from '@/lib/auth/auth'
+import { defineSchema, useForm, useFormError } from '@/lib/form'
 import { LoadingState } from '@/components/general'
 
 export type LoginForm = UserCredentials

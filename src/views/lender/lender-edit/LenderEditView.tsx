@@ -16,7 +16,7 @@ import PageHeader from '@/components/layout/page-header/PageHeader'
 import type { Address, KeysOf } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
 import { useUpdateLender } from '@/services/pos/lender'
-import { useForm, useFormError } from '@/utils/misc'
+import { useForm, useFormError } from '@/lib/form'
 import LenderUploadLogo from '@/views/lender/components/LenderUploadLogo'
 import { lenderSchema } from '@/views/lender/validation'
 

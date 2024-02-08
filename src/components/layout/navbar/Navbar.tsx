@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import { AppLogo } from '@/components/layout/app-logo/AppLogo'
 import { UserMenu, UserMenuItem } from '@/components/layout/user-menu/UserMenu'
-import { useAuthContext } from '@/providers/auth'
+import { useAuthContext } from '@/lib/auth/auth'
 
 export function Navbar() {
   const { user, logout } = useAuthContext()

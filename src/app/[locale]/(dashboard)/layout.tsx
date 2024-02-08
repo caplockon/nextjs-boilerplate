@@ -3,7 +3,7 @@
 import type { PropsWithChildren } from 'react'
 
 import { Navbar, Sidebar } from '@/components/layout'
-import { withAuthenticationRequired } from '@/providers/auth'
+import { withAuthenticationRequired } from '@/lib/auth/auth'
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (

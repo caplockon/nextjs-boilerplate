@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
-import { useAuthContext } from '@/providers/auth'
+import { useAuthContext } from '@/lib/auth/auth'
 
 /**
  * Component to show form to edit a lender

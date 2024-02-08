@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 
-import { AuthProvider } from '@/providers/auth'
+import { AuthProvider } from '@/lib/auth/auth'
 import { useAuthServer } from '@/services/auth'
 
 const AdminAuthProvider = ({ children }: PropsWithChildren) => {

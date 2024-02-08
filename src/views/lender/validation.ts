@@ -1,5 +1,5 @@
 import type { Lender } from '@/entities/lender'
-import { defineSchema } from '@/utils/misc'
+import { defineSchema } from '@/lib/form'
 
 /**
  * Define validation rules for lender form

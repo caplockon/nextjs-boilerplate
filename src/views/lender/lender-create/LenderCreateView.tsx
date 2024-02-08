@@ -8,7 +8,7 @@ import { XButton } from '@/components/general/button/XButton'
 import type { Address } from '@/entities/common'
 import type { Lender } from '@/entities/lender'
 import { useCreateLender } from '@/services/pos/lender'
-import { useForm, useFormError } from '@/utils/misc'
+import { useForm, useFormError } from '@/lib/form'
 import LenderUploadLogo from '@/views/lender/components/LenderUploadLogo'
 import { lenderSchema } from '@/views/lender/validation'
 
